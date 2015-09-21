@@ -20,6 +20,59 @@ function goSamples() {
   window.bodyHTML = document.body.innerHTML;
   window.bodyHTML = window.bodyHTML.replace(/</g, "&lt;");
   window.bodyHTML = window.bodyHTML.replace(/>/g, "&gt;");
+
+  // look for links to API documentation and convert them
+  // _traverseDOM(document);
+
+  // // add standard footers
+  // window.hdr = document.createElement("div");  // remember for hiding in goViewSource()
+  // var p = document.createElement("p");
+  // p.innerHTML = "<a href='javascript:goViewSource()'>View this sample page's source in-page</a>";
+  // hdr.appendChild(p);
+  // var p1 = document.createElement("p");
+  // var samplename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+  // p1.innerHTML = "<a href='https://github.com/NorthwoodsSoftware/GoJS/blob/master/samples/" + samplename + "' target='_blank'>View this sample page's source on GitHub</a>";
+  // hdr.appendChild(p1);
+
+  // var samplediv = document.getElementById("sample") || document.body;
+  // samplediv.appendChild(hdr);
+  // var ftr = document.createElement("div");
+  // ftr.className = "footer";
+  // var msg = "Copyright &copy; 1998-2015 by Northwoods Software Corporation.";
+  // if (window.go && window.go.version) {
+  //   msg = "<b>GoJS</b>&reg; version " + window.go.version + " for JavaScript and HTML. " + msg;
+  // }
+  // ftr.innerHTML = msg;
+  // samplediv.appendChild(ftr);
+
+  // add list of samples for navigation
+  // var menu = document.createElement("div");
+  // menu.id = "menu";
+  // menu.innerHTML = myMenu;
+  // document.body.insertBefore(menu, document.body.firstChild);
+
+  // when the page loads, change the class of navigation LI's
+  // var url = window.location.href;
+  // var lindex = url.lastIndexOf('/');
+  // url = url.slice(lindex+1).toLowerCase();  // include "/" to avoid matching prefixes
+  // // var lis = document.getElementById("sections").getElementsByTagName("li");
+  // var l = lis.length;
+  // var listed = false;
+  // for (var i = 0; i < l; i++) {
+  //   var li = lis[i].parentNode;
+  //   if (!li.href) continue;
+  //   var lowerhref = li.href.toLowerCase();
+  //   if (lowerhref.indexOf(url) !== -1) {
+  //     lis[i].className = "selected";
+  //     listed = true;
+  //   }
+  // }
+  // if (!listed) {
+  //   lis[lis.length -1].className = "selected";
+  // }
+
+}
+
 function _traverseDOM(node) {
   if (node.nodeType === 1 && node.nodeName === "A" && !node.getAttribute("href")) {
     var text = node.innerHTML.split(".");
