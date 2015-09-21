@@ -1,0 +1,27 @@
+{
+    "entities": [
+        {
+            "name": "dummyTable1",
+            "attributes":[
+                {
+                    "name": "attr1",
+                    "datatype":"int(50)"
+                },
+                {
+                    "name": "attr2",
+                    "datatype": "date"
+                }
+            ]
+        },
+        {
+            "name": "dummyTable2",
+            "attributes":[
+                {
+                    "name": "attr1",
+                    "datatype":"varchar(1000)"
+                }
+            ]
+        }
+    ],
+    "relationships": []
+}
