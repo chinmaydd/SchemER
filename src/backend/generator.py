@@ -23,7 +23,41 @@ for entity in entity_list:
     chunks.append("\n)")
     ddl.append(''.join(chunks))
 
+for entity in entity_list:
+	chunks = []
+	mflag = False
+	chunks.append("ALTER TABLE " + entity["name"] + "\n")
+	for attribute in entity["attributes"]:
+		flag = False
+		blocks = []
+		blocks.append("MODIFY " + attribute["name"] + " " + attribute["datatype"])
+		if(attribute["notNULL"] == "True"):
+			blocks.append("NOT NULL")
+			flag = True
+		if(attribute["isUNIQUE"] == "True"):
+			blocks.append("UNIQUE")
+			flag = True
+		if(attribute["isPK"] == "True"):
+			blocks.append("PRIMARY KEY")
+			flag = True
+		if(attribute["CHECK"] != ""):
+			blocks.append("CHECK(" + attribute["CHECK"] + ")");
+			flag = True
+		if(attribute["DEFAULT"] != ""):
+			blocks.append("DEFAULT " + attribute["DEFAULT"]);
+			flag = True
+		if(flag):
+			chunks.append(' '.join(blocks))
+			mflag = True
+		else:
+			chunks.pop()
+		chunks.append(",\n")
+	# remove last comma
+	chunks.pop()
+	chunks.append(";")
+	if(mflag):
+		ddl.append(' '.join(chunks))
 
-pprint(data)
 for d in ddl:
     print d
+			

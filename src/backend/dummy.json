@@ -5,11 +5,21 @@
             "attributes":[
                 {
                     "name": "attr1",
-                    "datatype":"int(50)"
+                    "datatype":"int(50)",
+                    "notNULL":"True",
+                    "isUNIQUE":"True",
+                    "isPK":"True",
+                    "CHECK":"attr1>35",
+                    "DEFAULT":"45"
                 },
                 {
                     "name": "attr2",
-                    "datatype": "date"
+                    "datatype": "date",
+                    "notNULL":"False",
+                    "isUNIQUE":"False",
+                    "isPK":"False",
+                    "CHECK":"",
+                    "DEFAULT":""
                 }
             ]
         },
@@ -18,7 +28,12 @@
             "attributes":[
                 {
                     "name": "attr1",
-                    "datatype":"varchar(1000)"
+                    "datatype":"varchar(1000)",
+                    "notNULL":"True",
+                    "isUNIQUE":"True",
+                    "isPK":"True",
+                    "CHECK":"attr1>35",
+                    "DEFAULT":"45"
                 }
             ]
         }
