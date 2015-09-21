@@ -1,10 +1,3 @@
-/*
- * GoJS v1.5.8 JavaScript Library for HTML Diagrams
- * Northwoods Software, http://www.nwoods.com/
- * GoJS and Northwoods Software are registered trademarks of Northwoods Software Corporation.
- * Copyright (C) 1998-2015 by Northwoods Software Corporation.  All Rights Reserved.
- * THIS SOFTWARE IS LICENSED.  THE LICENSE AGREEMENT IS AT: http://www.gojs.net/1.5.8/doc/license.html.
- */
 (function(window) {
     var r, aa = {};
     if (!window.document || void 0 === window.document.createElement("canvas").getContext) throw window.console && window.console.log("The HTML Canvas element is not supported in this browser,or this browser is in Compatibility mode."), Error("The HTML Canvas element is not supported in this browser,or this browser is in Compatibility mode.");
