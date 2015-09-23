@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+  <title>Entity Relationship</title>
+
+  <meta charset="UTF-8">
+
+  <script src="lib/js/go.js"></script>
+  <script src="lib/js/jquery.tools.min.js"></script>
+  <script src="lib/js/highlight.js"></script>
+  <script src="lib/js/lib.js" id="code"></script>
+
+  <link href="lib/css/goSamples.css" rel="stylesheet" type="text/css" />
+
+  </head>
+  <body onload="init()">
+    <div id="sample">
+      <div id="myDiagram" style="background-color: white; border: solid 1px black; width: 50%; height: 800px"></div>
+      <button onClick="addTable()">Add Table</button>
+      <div id="canvasMessage"></div>
+
+      <div class="modal" id="prompt">
+        <h2>This is a modal dialog</h2>
+        <p>
+          Welcome.
+        </p>
+        <!-- Input form. -->
+        <form>
+          <input />
+          <button type="submit"> OK </button>
+          <button type="button" class="close"> Cancel </button>
+        </form>
+        <br />
+      </div>
+
+    </div>
+  </body>
+</html>
