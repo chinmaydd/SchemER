@@ -18,11 +18,22 @@ function declareColors()
 
 /* Function to add a table to the schema */
 function addTable(){
-  nodeDataArray.push(
-    { key: "Employee",
-      items: [{name: "SSN", iskey: false, figure: "Decision", color: yellowgrad}],
-  });
-  myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+   //nodeDataArray.push({ key: "Employee",
+   //   items: [{name: "SSN", iskey: false, figure: "Decision", color: yellowgrad}]
+   //});
+   //myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+   $(".modal").overlay().load();
+}
+
+function addDataToNodeArray(tableData){
+    var name = tableData['table_name'];
+    var attribute = tableData['attribute'];
+
+    nodeDataArray.push({
+        key: name,
+        items: [{name: attribute, iskey: false, figure: "Decision", color: yellowgrad}],
+    });
+    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
 
 $(document).ready(function() {
@@ -41,10 +52,11 @@ $(document).ready(function() {
   
     $("#prompt form").submit(function(e) {
       /* User Input */
-      var input = $("input", this).val();
+      var name = $('#table_name').val();
+      var attribute = $('#attribute').val();
+      addDataToNodeArray({table_name: name, attribute: attribute});  
 
-      /* Do something with input */
-      console.log(input);
+      /* console.log(input); */
       $(".modal").overlay().close();
       this.reset();
 
@@ -168,7 +180,7 @@ function init() {
   // create the model for the E-R diagram
   // Array.prototype.push.apply(nodeDataArray, [
   //   { key: "Products",
-  //     items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad },
+  //     items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad }
   //              { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
   //              { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
   //              { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
