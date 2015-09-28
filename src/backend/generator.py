@@ -12,6 +12,7 @@ with open('dummy.json') as data_file:
 entity_list = data["entities"]
 ddl = []
 
+#Table Creation
 for entity in entity_list:
     chunks = []
     chunks.append("CREATE TABLE " + entity["name"] + "\n(\n")
@@ -23,6 +24,7 @@ for entity in entity_list:
     chunks.append("\n)")
     ddl.append(''.join(chunks))
 
+#Adding constraints to tables
 for entity in entity_list:
 	chunks = []
 	mflag = False
