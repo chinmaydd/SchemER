@@ -16,16 +16,29 @@ function declareColors()
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
 
-/* Function to add a table to the schema */
-function addTable(){
-   //nodeDataArray.push({ key: "Employee",
-   //   items: [{name: "SSN", iskey: false, figure: "Decision", color: yellowgrad}]
-   //});
-   //myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-   $(".modal").overlay().load();
+function loadModal(){
+  $('.modal').overlay().load();
 }
 
-function addDataToNodeArray(tableData){
+function getDatFromEventHandler(e){
+  // a = $.grep(nodeDataArray, function(f){ return f.key ==  e.subject.part.data.key });
+  // nodeDataArray = nodeDataArray.filter(function(el){ return el.key != a[0].key });
+
+   keyval = e.subject.part.data.key;
+   var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(keyval);
+
+   // nodeDataArray[index].items.
+}
+
+function updateTable(e){
+  tableData = getDatFromEventHandler(e);
+  // if($.grep(nodeDataArray, function(e){ return e.key ==  tableData['table_name'] }) == '')
+  //   addTable(tableData);
+  // else
+  //   modifyTable(tableData);
+}
+
+function addTable(tableData){
     var name = tableData['table_name'];
     var attribute = tableData['attribute'];
 
@@ -54,7 +67,7 @@ $(document).ready(function() {
       /* User Input */
       var name = $('#table_name').val();
       var attribute = $('#attribute').val();
-      addDataToNodeArray({table_name: name, attribute: attribute});  
+      addTable({table_name: name, attribute: attribute});  
 
       /* console.log(input); */
       $(".modal").overlay().close();
@@ -64,6 +77,63 @@ $(document).ready(function() {
       return e.preventDefault();
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+*/
+
 
 /* GoJS object initializer */
 function init() {
@@ -174,7 +244,8 @@ function init() {
     myDiagram.addDiagramListener("ObjectDoubleClicked",
       function(e) {
         var part = e.subject.part;
-        if (!(part instanceof go.Link)) $(".modal").overlay().load();
+        updateTable(e);
+        // if (!(part instanceof go.Link))
     });
 
   // create the model for the E-R diagram
