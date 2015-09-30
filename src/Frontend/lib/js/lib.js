@@ -20,22 +20,34 @@ function loadModal(){
   $('.modal').overlay().load();
 }
 
-function getDatFromEventHandler(e){
-  // a = $.grep(nodeDataArray, function(f){ return f.key ==  e.subject.part.data.key });
-  // nodeDataArray = nodeDataArray.filter(function(el){ return el.key != a[0].key });
-
-   keyval = e.subject.part.data.key;
-   var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(keyval);
-
-   // nodeDataArray[index].items.
+function checkTypeOfUpdate(e){
+  if($.grep(nodeDataArray, function(f){ return f.key ==  e.table_name }) == '')
+    addTable(e);
+  else
+    modifyTable(e);
 }
 
-function updateTable(e){
-  tableData = getDatFromEventHandler(e);
-  // if($.grep(nodeDataArray, function(e){ return e.key ==  tableData['table_name'] }) == '')
-  //   addTable(tableData);
-  // else
-  //   modifyTable(tableData);
+function updateModal(tableData){
+  $('#table_name').val(tableData.table_name);
+  $('#attribute').val(tableData.attribute);  
+  loadModal();
+}
+
+function getNewData(){
+  return { table_name: $('#table_name').val(), attribute: $('#attribute').val()};
+}
+
+function modifyTable(tableData){
+  debugger
+  var table_name = tableData.table_name;
+  var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(table_name);
+
+  tableData = getNewData();
+
+  nodeDataArray[index].table_name = tableData.table_name;
+  nodeDataArray[index].items[0].name = tableData.attribute;
+
+  myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
 
 function addTable(tableData){
@@ -67,7 +79,7 @@ $(document).ready(function() {
       /* User Input */
       var name = $('#table_name').val();
       var attribute = $('#attribute').val();
-      addTable({table_name: name, attribute: attribute});  
+      checkTypeOfUpdate({table_name: name, attribute: attribute});  
 
       /* console.log(input); */
       $(".modal").overlay().close();
@@ -243,8 +255,9 @@ function init() {
 
     myDiagram.addDiagramListener("ObjectDoubleClicked",
       function(e) {
-        var part = e.subject.part;
-        updateTable(e);
+        var table_name = e.subject.part.data.key;
+        var attribute  = e.subject.part.data.items[0].name;
+        updateModal({'table_name': table_name, 'attribute': attribute});
         // if (!(part instanceof go.Link))
     });
 
