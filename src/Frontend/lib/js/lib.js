@@ -16,10 +16,16 @@ function declareColors()
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
 
+/**
+ * Loads modal dialog screen
+ */
 function loadModal(){
   $('.modal').overlay().load();
 }
 
+/**
+ * Checks if type of update is add/edit
+ */
 function checkTypeOfUpdate(e){
   if($.grep(nodeDataArray, function(f){ return f.key ==  e.table_name }) == '')
     addTable(e);
@@ -27,18 +33,26 @@ function checkTypeOfUpdate(e){
     modifyTable(e);
 }
 
+/**
+ * Updates modal dialog input 
+ */
 function updateModal(tableData){
   $('#table_name').val(tableData.table_name);
   $('#attribute').val(tableData.attribute);  
   loadModal();
 }
 
+/**
+ * Gets data from modal dialog
+ */
 function getNewData(){
   return { table_name: $('#table_name').val(), attribute: $('#attribute').val()};
 }
 
+/**
+ * Updates existing entries
+ */
 function modifyTable(tableData){
-  debugger
   var table_name = tableData.table_name;
   var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(table_name);
 
@@ -50,6 +64,9 @@ function modifyTable(tableData){
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
 
+/**
+ * Adds a new table
+ */
 function addTable(tableData){
     var name = tableData['table_name'];
     var attribute = tableData['attribute'];
@@ -61,6 +78,9 @@ function addTable(tableData){
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
 
+/**
+ * Binds checkTypeOfUpdate() function to modal submit at document.ready()
+ */
 $(document).ready(function() {
     $(".modal").overlay({
 
@@ -89,52 +109,6 @@ $(document).ready(function() {
       return e.preventDefault();
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**************************************************************************************************************
 **************************************************************************************************************
