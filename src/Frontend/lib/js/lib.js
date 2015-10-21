@@ -3,6 +3,7 @@
   */
 var nodeDataArray = [];
 var linkDataArray = [];
+var flag = 0;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
 
@@ -20,14 +21,15 @@ function declareColors()
  * Loads modal dialog screen
  */
 function loadModal(){
+  flag = 0;
   $('.modal').overlay().load();
 }
 
 /**
  * Checks if type of update is add/edit
  */
-function checkTypeOfUpdate(e){
-  if($.grep(nodeDataArray, function(f){ return f.key ==  e.table_name }) == '')
+function checkTypeOfUpdate(e) {
+  if(flag == 0)
     addTable(e);
   else
     modifyTable(e);
@@ -38,8 +40,9 @@ function checkTypeOfUpdate(e){
  */
 function updateModal(tableData){
   $('#table_name').val(tableData.table_name);
-  $('#attribute').val(tableData.attribute);  
-  loadModal();
+  $('#attribute').val(tableData.attribute);
+  flag = 1;
+  $('.modal').overlay().load();
 }
 
 /**
@@ -53,12 +56,13 @@ function getNewData(){
  * Updates existing entries
  */
 function modifyTable(tableData){
-  var table_name = tableData.table_name;
+  var table_name = tableData.attribute;
   var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(table_name);
 
   tableData = getNewData();
+  debugger
 
-  nodeDataArray[index].table_name = tableData.table_name;
+  nodeDataArray[index].key = tableData.table_name;
   nodeDataArray[index].items[0].name = tableData.attribute;
 
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
@@ -110,7 +114,7 @@ $(document).ready(function() {
   });
 });
 
-/**************************************************************************************************************
+/*************************************************************************************************************
 **************************************************************************************************************
 **************************************************************************************************************
 **************************************************************************************************************
