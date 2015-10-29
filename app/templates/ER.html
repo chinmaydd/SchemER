@@ -5,12 +5,12 @@
 
   <meta charset="UTF-8">
 
-  <script src="lib/js/go.js"></script>
-  <script src="lib/js/jquery.tools.min.js"></script>
-  <script src="lib/js/highlight.js"></script>
-  <script src="lib/js/lib.js" id="code"></script>
+  <script src="static/js/go.js"></script>
+  <script src="static/js/jquery.tools.min.js"></script>
+  <script src="static/js/highlight.js"></script>
+  <script src="static/js/lib.js" id="code"></script>
 
-  <link href="lib/css/goSamples.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/goSamples.css" rel="stylesheet" type="text/css" />
 
   </head>
   <body onload="init()">
@@ -22,10 +22,9 @@
       <div class="modal" id="prompt">
           <h2>Add/Change table</h2>
         <!-- Input form. -->
-        <form id="modalform">
+        <form>
             Name: <input id="table_name" /><br />
-            <input type="button" id="add_attr" onClick="addAttribute()" value="Add attribute">
-            <!-- Attribute 1<input id="attribute" /><br /> -->
+            Attribute 1<input id="attribute" /><br />
            <button type="submit"> OK </button>
            <button type="button" class="close"> Cancel </button>
         </form>
