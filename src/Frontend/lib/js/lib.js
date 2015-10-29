@@ -56,7 +56,7 @@ function getNewData(){
  * Updates existing entries
  */
 function modifyTable(tableData){
-  var table_name = tableData.attribute;
+  var table_name = tableData.table_name;
   var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(table_name);
 
   tableData = getNewData();
