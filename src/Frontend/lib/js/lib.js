@@ -4,8 +4,10 @@
 var nodeDataArray = [];
 var linkDataArray = [];
 var flag = 0;
+var current_table_index = -1;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
+
 
 /* Define several shared brushes */
 function declareColors()
@@ -24,6 +26,21 @@ function loadModal(){
   flag = 0;
   $('.modal').overlay().load();
 }
+
+/**
+ * Function for adding multiple attributes
+ */
+ function addAttribute(){
+  current_table_index += 1;
+  var form = document.getElementById('modalform');
+
+  var element = document.createElement('input');
+  // element.id = 
+  form.appendChild(element);
+
+  var newline = document.createElement('br');
+  form.appendChild(newline);
+ }
 
 /**
  * Checks if type of update is add/edit
@@ -114,16 +131,12 @@ $(document).ready(function() {
   });
 });
 
-/*************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
+/*
+  **************************************************************************************************************
+  **************************************************************************************************************  
+  **************************************************************************************************************
+  **************************************************************************************************************
 */
-
 
 /* GoJS object initializer */
 function init() {
@@ -239,18 +252,27 @@ function init() {
         // if (!(part instanceof go.Link))
     });
 
-  // create the model for the E-R diagram
-  // Array.prototype.push.apply(nodeDataArray, [
-  //   { key: "Products",
-  //     items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad }
-  //              { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
-  //              { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
-  //              { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
-  // ]);
-  // Array.prototype.push.apply(linkDataArray, [
-  //   { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
-  //   { from: "Products", to: "Categories", text: "0..N", toText: "1" },
-  //   { from: "Order Details", to: "Products", text: "0..N", toText: "1" }
-  // ]);
+  
+    // create the model for the E-R diagram
+    Array.prototype.push.apply(nodeDataArray, [
+      { key: "Products",
+        items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad },
+                 { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
+                 { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
+                 { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
+    ]);
+      Array.prototype.push.apply(nodeDataArray, [
+      { key: "Suppliers",
+        items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad },
+                 { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
+                 { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
+                 { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
+    ]);
+    Array.prototype.push.apply(linkDataArray, [
+      { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
+      { from: "Products", to: "Categories", text: "0..N", toText: "1" },
+      { from: "Order Details", to: "Products", text: "0..N", toText: "1" }
+    ]);
+  
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
