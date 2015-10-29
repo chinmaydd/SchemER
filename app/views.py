@@ -17,4 +17,4 @@ def er():
 def success():
 	f = open('static/text/erdata.txt', 'w')
 	f.write(request.form['test'])
-    return 'Success!' + request.form['test']
+	return 'Success!' + request.form['test']
