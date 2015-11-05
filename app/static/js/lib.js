@@ -7,6 +7,9 @@ var flag = 0;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
 
+/**
+ * Need to create lists for 
+
 /* Define several shared brushes */
 function declareColors()
 {
@@ -18,10 +21,45 @@ function declareColors()
 }
 
 /**
+ * Adds a new attribute to the input modal
+ */
+function addAttribute(){
+ var form = document.getElementById('modalform');
+
+ var element = document.createElement('input');
+ // element.id = 
+ form.appendChild(element);
+
+ var newline = document.createElement('br');
+ form.appendChild(newline);
+}
+
+/**
+ * Updates the modal as required
+ */
+function refreshModal(){
+  form_div = document.getElementById('modalform');
+  children = form_div.getElementsByTagName('input');
+  debugger
+
+  for(var i=0;i<children.length;i++)
+  {
+    children[i].remove();
+  }
+
+  var inp = document.createElement('input');
+  inp.id = 'table_name';
+
+  form_div.appendChild(inp);
+  form_div.appendChild(document.createElement('br'));
+}
+
+/**
  * Loads modal dialog screen
  */
 function loadModal(){
   flag = 0;
+  refreshModal();
   $('.modal').overlay().load();
 }
 
@@ -29,11 +67,13 @@ function loadModal(){
  * Checks if type of update is add/edit
  */
 function checkTypeOfUpdate(e) {
+  debugger
   if(flag == 0)
     addTable(e);
   else
     modifyTable(e);
 }
+
 
 /**
  * Updates modal dialog input 
@@ -42,6 +82,7 @@ function updateModal(tableData){
   $('#table_name').val(tableData.table_name);
   $('#attribute').val(tableData.attribute);
   flag = 1;
+  refreshModal();
   $('.modal').overlay().load();
 }
 
@@ -60,7 +101,6 @@ function modifyTable(tableData){
   var index = nodeDataArray.map(function(e) { return e.key; }).indexOf(table_name);
 
   tableData = getNewData();
-  debugger
 
   nodeDataArray[index].key = tableData.table_name;
   nodeDataArray[index].items[0].name = tableData.attribute;
@@ -96,7 +136,7 @@ $(document).ready(function() {
       },
 
       closeOnClick: false,
-      api:true
+      api: true
     });
   
     $("#prompt form").submit(function(e) {
