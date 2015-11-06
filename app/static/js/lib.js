@@ -4,6 +4,7 @@
 var nodeDataArray = [];
 var linkDataArray = [];
 var flag = 0;
+var count_attr = 0;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
 
@@ -25,11 +26,12 @@ function declareColors()
  * Create option list for datatype containing values
  * 1. int
  * 2. varchar
- * etc.
+ * NEED TO ADD MORE OPTIONS
 */
 function type_select(){
   var sel = document.createElement('select');
-  sel.id = 'data_type_select'
+  sel.id = count_attr;
+  sel.className = 'data_type';
 
   var opt1 = document.createElement('option');
   opt1.value="int";
@@ -41,8 +43,14 @@ function type_select(){
   opt2.selected = "";
   opt2.innerHTML = "varchar";
 
+  var opt3 = document.createElement('option');
+  opt3.value = "date";
+  opt3.selected = "";
+  opt3.innerHTML = "date";  
+
   sel.appendChild(opt1);
   sel.appendChild(opt2);
+  sel.appendChild(opt3);
 
   return sel;
 }
@@ -54,7 +62,8 @@ function add_checkbox(checkbox_for){
   var checkbox = document.createElement('input');
   checkbox.type = "checkbox";
   checkbox.name = checkbox_for;
-  checkbox.value = "true";
+  checkbox.id = count_attr;
+  checkbox.className = checkbox_for;
 
   return checkbox;
 }
@@ -66,9 +75,11 @@ function addAttribute(){
  var form = document.getElementById('modalform');
 
  var element = document.createElement('input');
+ element.id = count_attr;
+ element.className = 'attribute_name';
  form.appendChild(element);
 
- var typ, null_checkbox, uniq_checkbox, pk_checkbox;
+ var typ, null_checkbox, uniq_checkbox, pk_checkbox, close_button;
 
  $.when(typ = type_select()).then(form.appendChild(typ));
  $.when(null_checkbox = add_checkbox('notNULL')).then(form.appendChild(null_checkbox));
@@ -77,12 +88,15 @@ function addAttribute(){
 
  var newline = document.createElement('br');
  form.appendChild(newline);
+
+ count_attr+=1;
 }
 
 /**
  * Updates the modal as required
  */
 function refreshModal(){
+  count_attr = 0;
   form_div = document.getElementById('modalform');
   children = form_div.querySelectorAll('input,br,option,select');
 
@@ -110,7 +124,6 @@ function loadModal(){
  * Checks if type of update is add/edit
  */
 function checkTypeOfUpdate(e) {
-  debugger
   if(flag == 0)
     addTable(e);
   else
@@ -156,11 +169,23 @@ function modifyTable(tableData){
  */
 function addTable(tableData){
     var name = tableData['table_name'];
-    var attribute = tableData['attribute'];
+    var attributes = tableData['attribute'];
+    var items_array = [];
+    var temp = {};
+    debugger
+
+    for(var i=0;i<attributes.length;i++){
+      temp['name'] = attributes[i].attribute_name;
+      temp['iskey'] = attributes[i].isPK;
+      temp['figure'] = "Decision";
+      temp['color'] = yellowgrad;
+      items_array.push(temp);
+      temp = {};
+    }
 
     nodeDataArray.push({
         key: name,
-        items: [{name: attribute, iskey: false, figure: "Decision", color: yellowgrad}],
+        items: items_array,
     });
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
@@ -185,8 +210,26 @@ $(document).ready(function() {
     $("#prompt form").submit(function(e) {
       /* User Input */
       var name = $('#table_name').val();
-      var attribute = $('#attribute').val();
-      checkTypeOfUpdate({table_name: name, attribute: attribute});  
+      var temp_attr;
+      var attributes = [];
+      var key_val = {};
+
+      /* Collect all attributes */
+      for(var i=0;i<count_attr;i++){
+        temp_attr = $("[id="+i+"]");
+        for(var j=0;j<temp_attr.length;j++){
+          if(temp_attr[j].className == 'attribute_name' || temp_attr[j].className == 'data_type')
+            key_val[temp_attr[j].className] = temp_attr[j].value;
+          else
+            key_val[temp_attr[j].className] = temp_attr[j].checked;
+        }
+        attributes.push(key_val);
+        key_val = {};
+      }
+
+      /* Add multiple attribute support */
+
+      checkTypeOfUpdate({table_name: name, attribute: attributes});  
 
       /* console.log(input); */
       $(".modal").overlay().close();
