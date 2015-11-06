@@ -20,6 +20,45 @@ function declareColors()
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
 
+
+/** 
+ * Create option list for datatype containing values
+ * 1. int
+ * 2. varchar
+ * etc.
+*/
+function type_select(){
+  var sel = document.createElement('select');
+  sel.id = 'data_type_select'
+
+  var opt1 = document.createElement('option');
+  opt1.value="int";
+  opt1.selected = "";
+  opt1.innerHTML = "int";
+
+  var opt2 = document.createElement('option');
+  opt2.value = "varchar";
+  opt2.selected = "";
+  opt2.innerHTML = "varchar";
+
+  sel.appendChild(opt1);
+  sel.appendChild(opt2);
+
+  return sel;
+}
+
+/**
+ * Create check option for given string
+ */
+function add_checkbox(checkbox_for){
+  var checkbox = document.createElement('input');
+  checkbox.type = "checkbox";
+  checkbox.name = checkbox_for;
+  checkbox.value = "true";
+
+  return checkbox;
+}
+
 /**
  * Adds a new attribute to the input modal
  */
@@ -27,8 +66,14 @@ function addAttribute(){
  var form = document.getElementById('modalform');
 
  var element = document.createElement('input');
- // element.id = 
  form.appendChild(element);
+
+ var typ, null_checkbox, uniq_checkbox, pk_checkbox;
+
+ $.when(typ = type_select()).then(form.appendChild(typ));
+ $.when(null_checkbox = add_checkbox('notNULL')).then(form.appendChild(null_checkbox));
+ $.when(uniq_checkbox = add_checkbox('isUnique')).then(form.appendChild(uniq_checkbox));
+ $.when(pk_checkbox = add_checkbox('isPK')).then(form.appendChild(pk_checkbox));
 
  var newline = document.createElement('br');
  form.appendChild(newline);
@@ -39,17 +84,16 @@ function addAttribute(){
  */
 function refreshModal(){
   form_div = document.getElementById('modalform');
-  children = form_div.getElementsByTagName('input');
-  debugger
+  children = form_div.querySelectorAll('input,br,option,select');
 
-  for(var i=0;i<children.length;i++)
-  {
-    children[i].remove();
-  }
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });
 
   var inp = document.createElement('input');
   inp.id = 'table_name';
 
+  form_div.appendChild(document.createElement('br'));
   form_div.appendChild(inp);
   form_div.appendChild(document.createElement('br'));
 }
@@ -59,8 +103,7 @@ function refreshModal(){
  */
 function loadModal(){
   flag = 0;
-  refreshModal();
-  $('.modal').overlay().load();
+  $.when(refreshModal()).then($('.modal').overlay().load());
 }
 
 /**
