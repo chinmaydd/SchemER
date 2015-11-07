@@ -16,18 +16,27 @@
   <body onload="init()">
     <div id="sample">
       <div id="myDiagram" style="background-color: white; border: solid 1px black; width: 50%; height: 600px"></div>
-      <button onClick="loadModal()">Add Table</button>
-      
-      <div id="canvasMessage"></div>
+      <button onClick="loadModal()">Add Table</button><br />
+      <button onClick="loadRelationModal()">Add Relation</button><br />
+
+
       <div class="modal" id="prompt">
           <h2>Add/Change table</h2>
           <form id='modalform'>
              <button type="button" id="add_attr" onClick="addAttribute()">Add attribute</button>
-            <button type="submit">OK</button>
+            <button type="submit"> OK </button>
             <button type="button" class="close"> Cancel </button>
           </form>
-      </div> 
       </div>
 
+      <div class="modal" id="relation_prompt">
+        <h2>Add/Change relations</h2>
+        <form id="relation_form">
+          <button type="submit">OK</button>
+          <button type="button" class="close"> Cancel </button>
+        </form>
+      </div>
+
+    </div>
   </body>
 </html>

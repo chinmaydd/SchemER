@@ -3,13 +3,19 @@
   */
 var nodeDataArray = [];
 var linkDataArray = [];
+var tableArray = [];
 var flag = 0;
 var count_attr = 0;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
 
 /**
- * Need to create lists for 
+ * Add links support
+ * Update table with multiple attributes
+ * Add different diagrams to different attributes
+ * Increase size of GoJS diagram
+ * Store additional attribute information
+ */
 
 /* Define several shared brushes */
 function declareColors()
@@ -21,13 +27,12 @@ function declareColors()
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
 
-
 /** 
  * Create option list for datatype containing values
  * 1. int
  * 2. varchar
  * NEED TO ADD MORE OPTIONS
-*/
+ */
 function type_select(){
   var sel = document.createElement('select');
   sel.id = count_attr;
@@ -113,11 +118,74 @@ function refreshModal(){
 }
 
 /**
- * Loads modal dialog screen
+ * Loads table modal dialog screen
  */
 function loadModal(){
   flag = 0;
-  $.when(refreshModal()).then($('.modal').overlay().load());
+  $.when(refreshModal()).then($('#prompt').overlay().load());
+}
+
+/**
+ * Refreshes relation modal
+ */
+function refreshRelationModal() {
+  form_div = document.getElementById('relation_form');
+  children = form_div.querySelectorAll('input, option, select');
+  
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });
+
+  var sel = document.createElement('select');
+  var opt;
+
+  for(var i=0;i<nodeDataArray.length;i++){
+    opt = document.createElement('option');
+    opt.value = nodeDataArray[i].key;;
+    opt.selected = '';
+    opt.innerHTML = nodeDataArray[i].key;
+    sel.appendChild(opt);
+  }
+
+  var sel1 = sel.cloneNode(true);
+  var sel2 = sel.cloneNode(true);
+
+  sel1.id = 'toTable';
+  sel2.id = 'fromTable';
+
+  form_div.appendChild(sel1);
+  form_div.appendChild(sel2);
+
+  var relation_type = document.createElement('select');
+  relation_type.id = 'relation_type';
+
+  var type1 = document.createElement('option');
+  type1.innerHTML = '0..N';
+  type1.value = '0..N';
+  type1.selected = '';
+
+  var type2 = document.createElement('option');
+  type2.innerHTML = '1..N';
+  type2.value = '1..N';
+  type2.selected = '';
+
+  var type3 = document.createElement('option');
+  type3.innerHTML = 'M..N';
+  type3.value = 'M..N';
+  type3.selected = '';  
+
+  relation_type.appendChild(type1);
+  relation_type.appendChild(type2);
+  relation_type.appendChild(type3);
+
+  form_div.appendChild(relation_type)
+}
+
+/**
+ * Loads relation modal dialog screen
+ */
+function loadRelationModal(){
+  $.when(refreshRelationModal()).then($('#relation_prompt').overlay().load());
 }
 
 /**
@@ -129,7 +197,6 @@ function checkTypeOfUpdate(e) {
   else
     modifyTable(e);
 }
-
 
 /**
  * Updates modal dialog input 
@@ -172,7 +239,6 @@ function addTable(tableData){
     var attributes = tableData['attribute'];
     var items_array = [];
     var temp = {};
-    debugger
 
     for(var i=0;i<attributes.length;i++){
       temp['name'] = attributes[i].attribute_name;
@@ -188,6 +254,11 @@ function addTable(tableData){
         items: items_array,
     });
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+}
+
+function addRelation(linkData) {
+  linkDataArray.push(linkData);
+  myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
 
 /**
@@ -232,11 +303,27 @@ $(document).ready(function() {
       checkTypeOfUpdate({table_name: name, attribute: attributes});  
 
       /* console.log(input); */
-      $(".modal").overlay().close();
+      $("#prompt").overlay().close();
       this.reset();
 
       /* Do not submit the form */
       return e.preventDefault();
+  });
+
+  $("#relation_prompt form").submit(function(e) {
+    var temp = {};
+    temp['from'] = document.getElementById('fromTable').value;
+    temp['to'] = document.getElementById('toTable').value;
+    temp['text'] = document.getElementById('relation_type').value;
+
+    addRelation(temp);
+
+    $("#relation_prompt").overlay().close();
+    this.reset();
+
+    return e.preventDefault();
+    // { from: "Products", to: "Suppliers", text: "0..N", toText: "1" }
+
   });
 });
 
