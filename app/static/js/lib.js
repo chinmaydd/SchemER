@@ -83,6 +83,7 @@ function add_checkbox(checkbox_for){
  * Adds a new attribute to the input modal
  */
 function addAttribute(){
+  debugger
  var form = document.getElementById('modalform');
 
  var element = document.createElement('input');
@@ -97,8 +98,8 @@ function addAttribute(){
  $.when(uniq_checkbox = add_checkbox('isUnique')).then(form.appendChild(uniq_checkbox));
  $.when(pk_checkbox = add_checkbox('isPK')).then(form.appendChild(pk_checkbox));
 
- var newline = document.createElement('br');
- form.appendChild(newline);
+ form.appendChild(document.createElement('br'));
+ form.appendChild(document.createElement('br'));
 
  count_attr+=1;
 }
@@ -120,6 +121,7 @@ function refreshModal(){
 
   form_div.appendChild(document.createElement('br'));
   form_div.appendChild(inp);
+  form_div.appendChild(document.createElement('br'));
   form_div.appendChild(document.createElement('br'));
 }
 
@@ -323,11 +325,11 @@ $(document).ready(function() {
     $(".modal").overlay({
 
       /* Mask tweaks suitable for modal dialogs */
-      mask: {
-        color: '#ebecff',
-        loadSpeed: 200,
-        opacity: 0.9
-      },
+      // mask: {
+      //   color: '#ebecff',
+      //   loadSpeed: 200,
+      //   opacity: 0.9
+      // },
 
       closeOnClick: false,
       api: true

@@ -19,28 +19,47 @@
       <div id="myDiagram" style="width: 50%; height: 600px;position: absolute;margin: auto;right: 0;left: 0;bottom: 0;top:0;background-color: white; border: solid 2px black;"></div>
       <br />
       <br />
-      <!-- <button onClick="loadModal()">Add Table</button><br /> -->
-      <!-- <button onClick="loadRelationModal()">Add Relation</button><br /> -->
         <a href="#" onClick="loadModal()" class="btn btn-primary btn-lg">Add Table</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="loadRelationModal()" class="btn btn-primary btn-lg">Add Relation</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="generateSQL()" class="btn btn-success btn-lg">Generate SQL!</a>&nbsp;&nbsp;&nbsp;&nbsp;
 
 
       <div class="modal" id="prompt">
-          <h2>Add/Change table</h2>
-          <form id='modalform'>
-            <button type="button" id="add_attr" class="btn btn-default" onClick="addAttribute()">Add attribute</button>
-            <button class="btn btn-success" type="submit"> OK </button>
-            <button type="button" class="btn btn-danger" onClick="closeModal()">Cancel</button>
-          </form>
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Add/Change table</h2>
+            </div>
+            <div class="modal-body">
+              <label>Table Name</label>
+              <form id='modalform' class="form-horizontal">
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success" onClick="$('#modalform').submit();">OK</button>    
+              <button type="button" id="add_attr" class="btn btn-default" onClick="addAttribute()">Add attribute</button>
+              <button type="button" class="btn btn-danger" onClick="closeModal()">Cancel</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="modal" id="relation_prompt">
-        <h2>Add/Change relations</h2>
-        <form id="relation_form">
-          <button type="submit" class="btn btn-success">OK</button>
-          <button type="button" class="btn btn-danger" onClick="closeRelationModal()"> Cancel </button>
-        </form>
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Add/Change Relations</h2>
+            </div>
+            <div class="modal-body">
+              <form id='relation_form'>                    
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success" onClick="$('#relation_form').submit();">OK</button>    
+              <button type="button" class="btn btn-danger" onClick="closeRelationModal()">Cancel</button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
