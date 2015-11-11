@@ -10,12 +10,18 @@ var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
 
 /**
- * Add links support
  * Update table with multiple attributes
  * Add different diagrams to different attributes
- * Increase size of GoJS diagram
- * Store additional attribute information
+ * Add primary key contraints to relations
  */
+
+ function closeRelationModal() {
+  $('#relation_prompt').overlay().close();
+ }
+
+ function closeModal() {
+  $('#prompt').overlay().close();
+ }
 
 /* Define several shared brushes */
 function declareColors()
@@ -241,12 +247,17 @@ function addTable(tableData){
     var temp = {};
 
     for(var i=0;i<attributes.length;i++){
-      temp['name'] = attributes[i].attribute_name;
-      temp['iskey'] = attributes[i].isPK;
-      temp['figure'] = "Decision";
-      temp['color'] = yellowgrad;
-      items_array.push(temp);
-      temp = {};
+      if(attributes[i].attribute_name != '') {
+        temp['name'] = attributes[i].attribute_name;
+        temp['iskey'] = attributes[i].isPK;
+        temp['figure'] = "Decision";
+        temp['color'] = yellowgrad;
+        temp['data_type'] = attributes[i].data_type;
+        temp['notNULL'] = attributes[i].notNULL;
+        temp['isUnique'] = attributes[i].isUnique;
+        items_array.push(temp);
+        temp = {};
+      }
     }
 
     nodeDataArray.push({
@@ -259,6 +270,50 @@ function addTable(tableData){
 function addRelation(linkData) {
   linkDataArray.push(linkData);
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+}
+
+/**
+ * Function call to generate SQL
+ */
+function generateSQL() {
+  var json = {};
+  var entity = {};
+  var attr;
+  json["entitites"] = [];
+  json["relations"] = [];
+
+  for(var i=0;i<nodeDataArray.length;i++) {
+    entity['name'] = nodeDataArray[i].key;
+    entity['attributes'] = [];
+    attr = {};
+    for(var j=0;j<nodeDataArray[i].items.length;j++) {
+      attr['name'] = nodeDataArray[i].items[j].name;
+      attr['datatype'] = nodeDataArray[i].items[j].data_type;
+      attr['notNULL'] = nodeDataArray[i].items[j].notNULL;
+      attr['isUNIQUE'] = nodeDataArray[i].items[j].isUnique;
+      attr['isPK'] = nodeDataArray[i].items[j].iskey;
+      entity['attributes'].push(attr);
+      attr = {};
+    }
+  }
+
+  attr = {};
+  for(var i=0;i<linkDataArray.length;i++) {
+    attr['from'] = linkDataArray[i].from;
+    attr['to'] = linkDataArray[i].to;
+    attr['type'] = linkDataArray[i].text;
+    json['relations'].push(attr);
+    attr = {};
+  }
+
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:5000/api/sql/",
+    data: json,
+    success: function(data) {
+      alert("Hello!");
+    }
+  });
 }
 
 /**

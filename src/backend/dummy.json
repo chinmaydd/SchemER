@@ -40,31 +40,11 @@
     ],
     "relations": [
         {
-            "name": "dummyrelation",
             "from": "dummyTable1",
             "to": "dummyTable2",
+            "type": "0..N",
             "FK1": "attr1",
             "FK2": "attr1",
-            "attributes":[
-                    {
-                        "name": "attr1",
-                        "datatype":"int(50)",
-                        "notNULL":"True",
-                        "isUNIQUE":"True",
-                        "isPK":"True",
-                        "CHECK":"attr1>35",
-                        "DEFAULT":"45"
-                    },
-                    {
-                        "name": "attr2",
-                        "datatype": "date",
-                        "notNULL":"False",
-                        "isUNIQUE":"False",
-                        "isPK":"False",
-                        "CHECK":"",
-                        "DEFAULT":""
-                    }
-                ]
         }
     ]
 }
