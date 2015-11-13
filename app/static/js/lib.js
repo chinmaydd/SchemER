@@ -6,6 +6,7 @@ var linkDataArray = [];
 var tableArray = [];
 var flag = 0;
 var count_attr = 0;
+var current_table;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
 declareColors();
 
@@ -14,14 +15,6 @@ declareColors();
  * Add different diagrams to different attributes
  * Add primary key contraints to relations
  */
-
- function closeRelationModal() {
-  $('#relation_prompt').overlay().close();
- }
-
- function closeModal() {
-  $('#prompt').overlay().close();
- }
 
 /* Define several shared brushes */
 function declareColors()
@@ -32,6 +25,46 @@ function declareColors()
   redgrad    = go.GraphObject.make(go.Brush, "Linear", { 0: "rgb(206, 106, 100)", 1: "rgb(180, 56, 50)" });
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
+
+function loadTableModal() {
+$('#del').overlay().load();
+}
+
+function closeDeleteModal() {
+$('#del').overlay().close();
+}
+
+function closeRelationModal() {
+$('#relation_prompt').overlay().close();
+}
+
+function closeModal() {
+$('#prompt').overlay().close();
+}
+
+function deleteTable() {
+  var indexes = $.map(linkDataArray, function(obj, index) {
+      if(obj.from == current_table || obj.to == current_table) {
+          return index;
+      }
+  });
+
+  for(var i=indexes.length-1;i>=0;i--) {
+    myDiagram.model.removeLinkData(linkDataArray[indexes[i]])
+  }
+
+  indexes = $.map(nodeDataArray, function(obj, index) {
+      if(obj.key == current_table) {
+          return index;
+      }
+  });
+
+  myDiagram.model.removeNodeData(nodeDataArray[indexes[0]]);
+  
+  current_table = '';
+  closeDeleteModal();
+}
+
 
 /** 
  * Create option list for datatype containing values
@@ -258,21 +291,11 @@ function refreshRelationModal() {
   type3.value = 'M..N';
   type3.selected = '';
 
-  var primary = document.createElement('label');
-  primary.id = ''
-  primary.innerHTML = '';
-
-  // var foreign = document.createElement('select');
-  // foreign.id = 'foreignkey';
-
   relation_type.appendChild(type1);
   relation_type.appendChild(type2);
   relation_type.appendChild(type3);
 
   form_div.appendChild(relation_type);
-  form_div.appendChild(primary);
-  // form_div.appendChild(foreign);
-
 }
 
 /**
@@ -280,16 +303,6 @@ function refreshRelationModal() {
  */
 function loadRelationModal(){
   $.when(refreshRelationModal()).then($('#relation_prompt').overlay().load());
-}
-
-/**
- * Checks if type of update is add/edit
- */
-function checkTypeOfUpdate(e) {
-  if(flag == 0)
-    addTable(e);
-  else
-    modifyTable(e);
 }
 
 /**
@@ -330,7 +343,7 @@ function modifyTable(tableData){
  */
 function addTable(tableData){
     var name = tableData['table_name'];
-    if(name == '') {
+    if(name == '' || name.indexOf(' ') > -1) {
       return false;
     }
     else {
@@ -339,7 +352,10 @@ function addTable(tableData){
       var temp = {};
 
       for(var i=0;i<attributes.length;i++){
-        if(attributes[i].attribute_name != '') {
+        if(attributes[i].attribute_name == '' || attributes[i].attribute_name.indexOf(' ') > -1) {
+          console.log('');
+        }
+        else {
           temp['name'] = attributes[i].attribute_name;
           temp['iskey'] = attributes[i].isPK;
           temp['figure'] = "Decision";
@@ -348,7 +364,7 @@ function addTable(tableData){
           temp['notNULL'] = attributes[i].notNULL;
           temp['isUnique'] = attributes[i].isUnique;
           items_array.push(temp);
-          temp = {};
+          temp = {};          
         }
       }
 
@@ -412,18 +428,10 @@ function generateSQL() {
 }
 
 /**
- * Binds checkTypeOfUpdate() function to modal submit at document.ready()
+ * Binds addTable() function to modal submit at document.ready()
  */
 $(document).ready(function() {
     $(".modal").overlay({
-
-      /* Mask tweaks suitable for modal dialogs */
-      // mask: {
-      //   color: '#ebecff',
-      //   loadSpeed: 200,
-      //   opacity: 0.9
-      // },
-
       closeOnClick: false,
       api: true
     });
@@ -448,9 +456,7 @@ $(document).ready(function() {
         key_val = {};
       }
 
-      /* Add multiple attribute support */
-
-      checkTypeOfUpdate({table_name: name, attribute: attributes});  
+      addTable({table_name: name, attribute: attributes});  
 
       /* console.log(input); */
       $("#prompt").overlay().close();
@@ -479,14 +485,7 @@ $(document).ready(function() {
 
 /*************************************************************************************************************
 **************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
 */
-
 
 /* GoJS object initializer */
 function init() {
@@ -596,24 +595,19 @@ function init() {
 
     myDiagram.addDiagramListener("ObjectDoubleClicked",
       function(e) {
-        var table_name = e.subject.part.data.key;
-        var attribute  = e.subject.part.data.items[0].name;
-        updateModal({'table_name': table_name, 'attribute': attribute});
-        // if (!(part instanceof go.Link))
+        current_table = e.subject.part.data.key;
+        loadTableModal();
     });
 
-  // create the model for the E-R diagram
-  // Array.prototype.push.apply(nodeDataArray, [
-  //   { key: "Products",
-  //     items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad }
-  //              { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
-  //              { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
-  //              { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
-  // ]);
-  // Array.prototype.push.apply(linkDataArray, [
-  //   { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
-  //   { from: "Products", to: "Categories", text: "0..N", toText: "1" },
-  //   { from: "Order Details", to: "Products", text: "0..N", toText: "1" }
-  // ]);
+  /**
+    create the model for the E-R diagram
+    Array.prototype.push.apply(nodeDataArray, [
+      { key: "Products",
+        items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad }
+    ]);
+    Array.prototype.push.apply(linkDataArray, [
+      { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
+    ]);
+  */
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
