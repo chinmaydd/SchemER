@@ -83,7 +83,6 @@ function add_checkbox(checkbox_for){
  * Adds a new attribute to the input modal
  */
 function addAttribute(){
-  debugger
  var form = document.getElementById('modalform');
 
  var element = document.createElement('input');
@@ -133,12 +132,68 @@ function loadModal(){
   $.when(refreshModal()).then($('#prompt').overlay().load());
 }
 
+function changeOptions() {
+  var foreign = document.getElementById('toTable');
+  var val = foreign.options[foreign.selectedIndex].text;
+
+  var form_div = document.getElementById('relation_form');
+  children = form_div.querySelectorAll("[id^='foreignkey']");
+  
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });  
+  
+  var primary = document.getElementById('fromTable');
+  primary = primary.options[primary.selectedIndex].text;
+
+  var indexes, keycount;
+
+  keycount = $.map(nodeDataArray, function(obj, index) {
+      var count=0;
+      if(obj.key == primary) {
+          for(var i=0;i<obj.items.length;i++) {
+            if(obj.items[i].iskey == true)
+              count++;
+          }
+        return count;
+      }
+  });
+
+  keycount = keycount[0];
+
+  indexes = $.map(nodeDataArray, function(obj, index) {
+      if(obj.key == val) {
+          return index;
+      }
+  });
+
+  var idx = indexes[0];
+  var opt;
+  var sel = document.createElement('select');
+
+  for(var i=0;i<nodeDataArray[idx].items.length;i++) {
+    opt = document.createElement('option');
+    opt.value = nodeDataArray[idx].items[i].name;
+    opt.selected = '';
+    opt.innerHTML = nodeDataArray[idx].items[i].name;
+    sel.appendChild(opt);    
+  }
+
+  for(var j=0;j<keycount;j++) {
+    var temp = sel.cloneNode(true);
+    temp.id = 'foreignkey' + j;
+    form_div.appendChild(temp);
+  }
+}
+
+function changeLabel(val) {
+}
 /**
  * Refreshes relation modal
  */
 function refreshRelationModal() {
   form_div = document.getElementById('relation_form');
-  children = form_div.querySelectorAll('input, option, select');
+  children = form_div.querySelectorAll('input, option, select, label');
   
   Array.prototype.forEach.call( children, function( node ) {
       node.parentNode.removeChild( node );
@@ -147,10 +202,15 @@ function refreshRelationModal() {
   var sel = document.createElement('select');
   var opt;
 
+  opt = document.createElement('option');
+  opt.value = '';
+  opt.innerHTML = '';
+  opt.selected = true;
+  sel.appendChild(opt);  
+
   for(var i=0;i<nodeDataArray.length;i++){
     opt = document.createElement('option');
-    opt.value = nodeDataArray[i].key;;
-    opt.selected = '';
+    opt.value = nodeDataArray[i].key;
     opt.innerHTML = nodeDataArray[i].key;
     sel.appendChild(opt);
   }
@@ -160,6 +220,22 @@ function refreshRelationModal() {
 
   sel1.id = 'toTable';
   sel2.id = 'fromTable';
+
+  sel1.addEventListener(
+    'change',
+    function(){
+      changeOptions();
+    },
+    false
+    );
+
+  sel2.addEventListener(
+    'change',
+    function(){
+      changeOptions();
+    },
+    false
+    );   
 
   form_div.appendChild(sel1);
   form_div.appendChild(sel2);
@@ -180,13 +256,23 @@ function refreshRelationModal() {
   var type3 = document.createElement('option');
   type3.innerHTML = 'M..N';
   type3.value = 'M..N';
-  type3.selected = '';  
+  type3.selected = '';
+
+  var primary = document.createElement('label');
+  primary.id = ''
+  primary.innerHTML = '';
+
+  // var foreign = document.createElement('select');
+  // foreign.id = 'foreignkey';
 
   relation_type.appendChild(type1);
   relation_type.appendChild(type2);
   relation_type.appendChild(type3);
 
-  form_div.appendChild(relation_type)
+  form_div.appendChild(relation_type);
+  form_div.appendChild(primary);
+  // form_div.appendChild(foreign);
+
 }
 
 /**
@@ -244,29 +330,34 @@ function modifyTable(tableData){
  */
 function addTable(tableData){
     var name = tableData['table_name'];
-    var attributes = tableData['attribute'];
-    var items_array = [];
-    var temp = {};
-
-    for(var i=0;i<attributes.length;i++){
-      if(attributes[i].attribute_name != '') {
-        temp['name'] = attributes[i].attribute_name;
-        temp['iskey'] = attributes[i].isPK;
-        temp['figure'] = "Decision";
-        temp['color'] = yellowgrad;
-        temp['data_type'] = attributes[i].data_type;
-        temp['notNULL'] = attributes[i].notNULL;
-        temp['isUnique'] = attributes[i].isUnique;
-        items_array.push(temp);
-        temp = {};
-      }
+    if(name == '') {
+      return false;
     }
+    else {
+      var attributes = tableData['attribute'];
+      var items_array = [];
+      var temp = {};
 
-    nodeDataArray.push({
-        key: name,
-        items: items_array,
-    });
-    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+      for(var i=0;i<attributes.length;i++){
+        if(attributes[i].attribute_name != '') {
+          temp['name'] = attributes[i].attribute_name;
+          temp['iskey'] = attributes[i].isPK;
+          temp['figure'] = "Decision";
+          temp['color'] = yellowgrad;
+          temp['data_type'] = attributes[i].data_type;
+          temp['notNULL'] = attributes[i].notNULL;
+          temp['isUnique'] = attributes[i].isUnique;
+          items_array.push(temp);
+          temp = {};
+        }
+      }
+
+      nodeDataArray.push({
+          key: name,
+          items: items_array,
+      });
+      myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+  }
 }
 
 function addRelation(linkData) {
@@ -307,6 +398,8 @@ function generateSQL() {
     json['relations'].push(attr);
     attr = {};
   }
+  debugger
+  console.log(json);
 
   $.ajax({
     type: "POST",
