@@ -8,7 +8,7 @@ import json
 errors = []
 
 with open("../data/dummy.json") as data_file:
-    data = json.load(data_file)
+	data = json.load(data_file)
 
 def validate():
 	# First, validate FK->PK constraint
@@ -16,6 +16,10 @@ def validate():
 	# a) ensuring that the FK and PK exist in respective tables
 	# b) the types of the two columns are the same
 	relation_list = data["relations"]
+	temp = [str(item) for item in relation_list]
+	if len(temp) != len(set(temp)):
+		errors.append("Duplicate relations exist!")
+		
 	entity_list = data["entities"]
 	for relation in relation_list:
 		fromTable = relation["from"]
