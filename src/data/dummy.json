@@ -20,8 +20,19 @@
                     "isPK":"False",
                     "CHECK":"",
                     "DEFAULT":""
+                },
+                {
+                    "name":"attr3",
+                     "datatype": "date",
+                    "notNULL":"False",
+                    "isUNIQUE":"False",
+                    "isPK":"False",
+                    "CHECK":"",
+                    "DEFAULT":""
                 }
-            ]
+                
+            ],
+            "fds" : ["attr2~attr3"]
         },
         {
             "name": "dummyTable2",
@@ -35,7 +46,8 @@
                     "CHECK":"attr1>35",
                     "DEFAULT":"45"
                 }
-            ]
+            ],
+            "fds" : []
         }
     ],
     "relations": [
