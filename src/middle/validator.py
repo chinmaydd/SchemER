@@ -16,6 +16,8 @@ def validate():
 	# a) ensuring that the FK and PK exist in respective tables
 	# b) the types of the two columns are the same
 	relation_list = data["relations"]
+
+	# Add an error if there are duplicate relations
 	temp = [str(item) for item in relation_list]
 	if len(temp) != len(set(temp)):
 		errors.append("Duplicate relations exist!")
