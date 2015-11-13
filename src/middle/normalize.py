@@ -18,6 +18,14 @@ def normalize():
 		for attr in entity["attributes"]:
 			if attr["isPK"] == "True":
 				entity_pks[entity["name"]].append(attr["name"])
-	print entity_pks
+		entity_pks[entity["name"]] = sort(entity_pks[entity["name"]])
+
+		fd_list = entity["fds"]
+		for fd in fd_list:
+			lhs,rhs = fd.split('~')
+			lhs = sort(lhs.split(','))
+			if ''.join(lhs) in ''.join(entity_pks[entity["name"]]):
+				
+  	print entity_pks
 
 normalize()	
