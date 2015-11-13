@@ -5,7 +5,7 @@ DDL for table generation.
 import json
 from pprint import pprint
 
-with open('dummy.json') as data_file:
+with open('../data/dummy.json') as data_file:
     data = json.load(data_file)
 
 # Process entities first
@@ -65,12 +65,12 @@ for relation in relation_list:
 	chunks = []
 	table1 = relation["from"]
 	table2 = relation["to"]
-	FK1 = relation["FK1"]
-	FK2 = relation["FK2"]
+	FK = relation["FK"]
+	PK = relation["PK"]
 	# add foreign key constraint
 	chunks.append("ALTER TABLE "+ table1 + "\n")
-	chunks.append("ADD FOREIGN KEY ("+FK1+")\n")
-	chunks.append("REFERENCES "+table2+"("+FK2+");")
+	chunks.append("ADD FOREIGN KEY ("+FK+")\n")
+	chunks.append("REFERENCES "+table2+"("+PK+");")
 	ddl.append(''.join(chunks))
 	# create table for relation attributes
 	if len(relation["attributes"])>0:

@@ -43,8 +43,8 @@
             "from": "dummyTable1",
             "to": "dummyTable2",
             "type": "0..N",
-            "FK1": "attr1",
-            "FK2": "attr1",
+            "FK": "attr1",
+            "PK": "attr1"
         }
     ]
 }
