@@ -5,9 +5,15 @@ var nodeDataArray = [];
 var linkDataArray = [];
 var tableArray = [];
 var flag = 0;
+var entities = {};
 var count_attr = 0;
 var current_table;
-var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
+var Aselect_value = 0;
+var Bselect_value = 0;
+var global_table_sel;
+var global_option_sel;
+var for_length = 0;
+var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad;
 declareColors();
 
 /**
@@ -24,6 +30,148 @@ function declareColors()
   greengrad  = go.GraphObject.make(go.Brush, "Linear", { 0: "rgb(158, 209, 159)", 1: "rgb(67, 101, 56)" });
   redgrad    = go.GraphObject.make(go.Brush, "Linear", { 0: "rgb(206, 106, 100)", 1: "rgb(180, 56, 50)" });
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
+}
+
+function addAfunc() {
+  funca = document.getElementById('funcA');
+  var temp = global_option_sel.cloneNode(true);
+  temp.id = "Afunc_dep" + Aselect_value;
+  Aselect_value+=1
+
+  funca.appendChild(temp);
+}
+
+function addBfunc() {
+  funcb = document.getElementById('funcB');
+  var temp = global_option_sel.cloneNode(true);
+  temp.id = "Bfunc_dep" + Aselect_value;
+  Bselect_value+=1
+
+  funcb.appendChild(temp);
+}
+
+function populateFD() {
+  funca = document.getElementById('funcA');
+  funcb = document.getElementById('funcB');
+  var func = document.getElementById('func_dep_table');
+  var val = func.options[func.selectedIndex].text;
+
+  current_table = val;
+
+  indexes = $.map(nodeDataArray, function(obj, index) {
+      if(obj.key == current_table) {
+          return index;
+      }
+  });
+
+  var idx = indexes[0];
+  var opt;
+  var sel1 = document.createElement('select');
+
+  for(var i=0;i<nodeDataArray[idx].items.length;i++) {
+    opt = document.createElement('option');
+    opt.value = nodeDataArray[idx].items[i].name;
+    opt.selected = '';
+    opt.innerHTML = nodeDataArray[idx].items[i].name;
+    sel1.appendChild(opt);    
+  }
+
+  var sel2 = sel1.cloneNode(true);
+  global_option_sel = sel2.cloneNode(true);
+
+  sel1.id = "Afunc_dep" + Aselect_value;
+  Aselect_value += 1;
+  funca.appendChild(sel1);
+
+  sel2.id = "Bfunc_dep" + Bselect_value;
+  Bselect_value += 1;
+  funcb.appendChild(sel2);
+}
+
+function refreshFDModal() {
+  form_div = document.getElementById('func_dep_form');
+  children = form_div.querySelectorAll('option,select,p');
+
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });
+  
+  var sel = document.createElement('select');
+  sel.id = "func_dep_table";
+  var opt;
+
+  opt = document.createElement('option');
+  opt.value = '';
+  opt.innerHTML = '';
+  opt.selected = true;
+  sel.appendChild(opt);
+
+  sel.addEventListener(
+    'change',
+    function(){
+      populateFD();
+    },
+    false
+    ); 
+
+  for(var i=0;i<nodeDataArray.length;i++){
+    opt = document.createElement('option');
+    opt.value = nodeDataArray[i].key;
+    opt.innerHTML = nodeDataArray[i].key;
+    sel.appendChild(opt);
+  }
+  global_table_sel = sel;
+  document.getElementById('functable').appendChild(sel);
+}
+
+function loadFDModal() {
+  $.when(refreshFDModal()).then($('#func_dep').overlay().load());
+}
+
+function closeFuncDepModal() {
+  $('#func_dep').overlay().close();
+}
+
+function addFD() {
+  var str1 = '';
+  var str2 = '';
+
+  var func, val;
+
+  for(var i=0;i<Aselect_value;i++) {
+    func = document.getElementById('Afunc_dep'+i);
+    val = func.options[func.selectedIndex].text;
+
+    str1+=val;
+    if(i!=Aselect_value-1) {
+      str1+=',';
+    }
+
+  }
+
+  for(var i=0;i<Bselect_value;i++) {
+    func = document.getElementById('Bfunc_dep'+i);
+    val = func.options[func.selectedIndex].text;
+
+    str2+=val;
+    if(i!=Bselect_value-1) {
+      str2+=',';
+    }
+  }
+  Aselect_value = 0;
+  Bselect_value = 0;
+
+  current_table = '';
+
+  var func_str = str1 + '~' + str2;
+
+  if(typeof entities[current_table] !== 'undefined' && entities[current_table].length > 0) {
+    entities[current_table].push(func_str);
+  } else {
+    entities[current_table] = [];
+    entities[current_table].push(func_str);
+  }
+  closeFuncDepModal();
 }
 
 function loadTableModal() {
@@ -60,7 +208,7 @@ function deleteTable() {
   });
 
   myDiagram.model.removeNodeData(nodeDataArray[indexes[0]]);
-  
+
   current_table = '';
   closeDeleteModal();
 }
@@ -68,8 +216,6 @@ function deleteTable() {
 
 /** 
  * Create option list for datatype containing values
- * 1. int
- * 2. varchar
  * NEED TO ADD MORE OPTIONS
  */
 function type_select(){
@@ -166,6 +312,7 @@ function loadModal(){
 }
 
 function changeOptions() {
+  for_length = 0;
   var foreign = document.getElementById('toTable');
   var val = foreign.options[foreign.selectedIndex].text;
 
@@ -203,6 +350,11 @@ function changeOptions() {
   var idx = indexes[0];
   var opt;
   var sel = document.createElement('select');
+  // opt = document.createElement('option');
+  // opt.value = '';
+  // opt.innerHTML = '';
+  // opt.selected = true;
+  // sel.appendChild(opt);
 
   for(var i=0;i<nodeDataArray[idx].items.length;i++) {
     opt = document.createElement('option');
@@ -215,12 +367,11 @@ function changeOptions() {
   for(var j=0;j<keycount;j++) {
     var temp = sel.cloneNode(true);
     temp.id = 'foreignkey' + j;
+    for_length += 1;
     form_div.appendChild(temp);
   }
 }
 
-function changeLabel(val) {
-}
 /**
  * Refreshes relation modal
  */
@@ -394,6 +545,7 @@ function generateSQL() {
   for(var i=0;i<nodeDataArray.length;i++) {
     entity['name'] = nodeDataArray[i].key;
     entity['attributes'] = [];
+    entity['fds'] = entitites[nodeDataArray[i].key];
     attr = {};
     for(var j=0;j<nodeDataArray[i].items.length;j++) {
       attr['name'] = nodeDataArray[i].items[j].name;
@@ -414,7 +566,6 @@ function generateSQL() {
     json['relations'].push(attr);
     attr = {};
   }
-  debugger
   console.log(json);
 
   $.ajax({
@@ -472,13 +623,40 @@ $(document).ready(function() {
     temp['to'] = document.getElementById('toTable').value;
     temp['text'] = document.getElementById('relation_type').value;
 
+    var indexes = $.map(nodeDataArray, function(obj, index) {
+        if(obj.key == document.getElementById('fromTable').value) {
+            return index;
+        }
+    });
+
+    var str = '';
+    indexes = $.map(nodeDataArray[indexes].items, function(obj, index) {
+        if(obj.iskey == true) {
+            str += obj.name;
+            str += ',';
+            return obj.name;
+        }
+    });
+
+    temp['PK'] = str;
+    str = '';
+
+    for(var i=0;i<for_length;i++) {
+      debugger
+      var foreign = document.getElementById('foreignkey'+i);
+      var val = foreign.options[foreign.selectedIndex].text;
+
+      str += val;
+      str += ',';
+    }
+
+    temp['FK'] = str;
     addRelation(temp);
 
     $("#relation_prompt").overlay().close();
     this.reset();
 
     return e.preventDefault();
-    // { from: "Products", to: "Suppliers", text: "0..N", toText: "1" }
 
   });
 });
