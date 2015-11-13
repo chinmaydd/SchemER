@@ -132,17 +132,20 @@ function loadModal(){
   $.when(refreshModal()).then($('#prompt').overlay().load());
 }
 
-function changeOptions(val) {
-  debugger
-  // var sel = document.getElementById('foreignkey');
-  var form_div = document.getElementById('relation_form');
-  var primary = document.getElementById('fromTable').value;
+function changeOptions() {
+  var foreign = document.getElementById('toTable');
+  var val = foreign.options[foreign.selectedIndex].text;
 
-  // children = sel.querySelectorAll('option');
+  var form_div = document.getElementById('relation_form');
+  children = form_div.querySelectorAll("[id^='foreignkey']");
   
-  // Array.prototype.forEach.call( children, function( node ) {
-  //     node.parentNode.removeChild( node );
-  // });
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });  
+  
+  var primary = document.getElementById('fromTable');
+  primary = primary.options[primary.selectedIndex].text;
+
   var indexes, keycount;
 
   keycount = $.map(nodeDataArray, function(obj, index) {
@@ -156,6 +159,8 @@ function changeOptions(val) {
       }
   });
 
+  keycount = keycount[0];
+
   indexes = $.map(nodeDataArray, function(obj, index) {
       if(obj.key == val) {
           return index;
@@ -164,6 +169,7 @@ function changeOptions(val) {
 
   var idx = indexes[0];
   var opt;
+  var sel = document.createElement('select');
 
   for(var i=0;i<nodeDataArray[idx].items.length;i++) {
     opt = document.createElement('option');
@@ -171,6 +177,12 @@ function changeOptions(val) {
     opt.selected = '';
     opt.innerHTML = nodeDataArray[idx].items[i].name;
     sel.appendChild(opt);    
+  }
+
+  for(var j=0;j<keycount;j++) {
+    var temp = sel.cloneNode(true);
+    temp.id = 'foreignkey' + j;
+    form_div.appendChild(temp);
   }
 }
 
@@ -190,10 +202,15 @@ function refreshRelationModal() {
   var sel = document.createElement('select');
   var opt;
 
+  opt = document.createElement('option');
+  opt.value = '';
+  opt.innerHTML = '';
+  opt.selected = true;
+  sel.appendChild(opt);  
+
   for(var i=0;i<nodeDataArray.length;i++){
     opt = document.createElement('option');
-    opt.value = nodeDataArray[i].key;;
-    opt.selected = '';
+    opt.value = nodeDataArray[i].key;
     opt.innerHTML = nodeDataArray[i].key;
     sel.appendChild(opt);
   }
@@ -207,7 +224,7 @@ function refreshRelationModal() {
   sel1.addEventListener(
     'change',
     function(){
-      changeOptions(this.value);
+      changeOptions();
     },
     false
     );
@@ -215,7 +232,7 @@ function refreshRelationModal() {
   sel2.addEventListener(
     'change',
     function(){
-      changeLabel(this.value);
+      changeOptions();
     },
     false
     );   
