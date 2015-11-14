@@ -362,6 +362,8 @@ function deleteTable() {
       }
   });
 
+  delete entities[current_table];
+
   myDiagram.model.removeNodeData(nodeDataArray[indexes[0]]);
 
   current_table = '';

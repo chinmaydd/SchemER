@@ -72,6 +72,8 @@ def normalize( entity ):
 			if( len(attr) -len(lhs) > 0 ):
 				FDvisited =list(set(FDvisited + fduse))
 				attr_list_1 = [ copy.deepcopy(d) for d in entity["attributes"] if d["name"] in attr ]
+				for d in attr_list_1:
+					d["isPK"] = "False"
 				attr_list_2 = [ d for d in entity["attributes"] if d["name"] not in attr or d["name"] in lhs or d["name"] in PK ]
 				new_name = entity["name"]+'_'+str(i)
 				FD_new = fd
