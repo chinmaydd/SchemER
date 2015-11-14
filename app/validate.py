@@ -66,8 +66,10 @@ def validate(data, flag):
 	if err_string == '':
 		if flag == 0:
 			return generate(data)
+		elif flag==1:
+			normalized_data = ret_normalize(data)
+			return generate(ast.literal_eval(normalized_data))
 		else:
-			temp = ret_normalize(data)
-			return generate(ast.literal_eval(temp))
+			return ret_normalize(data)
 	else:
 		return err_string

@@ -15,12 +15,15 @@
   </head>
   <body onload="init()">
     <div id="sample">
-      <div id="myDiagram" style="width: 50%; height: 400px;position: fixed;margin: auto;right: 0;left: 0;bottom: 0;top:0;background-color: white; border: solid 2px black;"></div>
+      <div id="myDiagram" style="width: 50%; height: 50%;position: fixed;margin: auto;right: 0;left: 0;bottom: 0;top:0;background-color: white; overflow: scroll;border: solid 2px black;"></div>
       <br />
       <br />
         <a href="#" onClick="loadModal()" class="btn btn-primary btn-lg">Add Table</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="loadRelationModal()" class="btn btn-primary btn-lg">Add Relation</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="loadFDModal()" class="btn btn-primary btn-lg">Add FD</a>&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <a href="#" onClick="newDiagram()" class="btn btn-primary btn-lg">Update Normalized Diagram</a>&nbsp;&nbsp;&nbsp;&nbsp;
+
         <a href="#" onClick="generateSQL()" class="btn btn-success btn-lg">Generate SQL!</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="normalizeTables()" class="btn btn-success btn-lg">Normalize</a>&nbsp;&nbsp;&nbsp;&nbsp;
 

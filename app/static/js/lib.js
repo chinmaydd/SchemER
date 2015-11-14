@@ -13,7 +13,10 @@ var Bselect_value = 0;
 var global_table_sel;
 var global_option_sel;
 var for_length = 0;
+var save_data;
+var save_link;
 var s;
+var copy_json;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad;
 declareColors();
 
@@ -183,7 +186,6 @@ function addFD() {
 /////////////////////////////
 
 function changeOptions() {
-  debugger
   for_length = 0;
   var foreign = document.getElementById('toTable');
   var val = foreign.options[foreign.selectedIndex].text;
@@ -203,7 +205,6 @@ function changeOptions() {
   keycount = $.map(nodeDataArray, function(obj, index) {
       var count=0;
       if(obj.key == primary) {
-        debugger
           for(var i=0;i<obj.items.length;i++) {
             if(obj.items[i].iskey == 'True')
               count++;
@@ -573,8 +574,11 @@ function setJSON() {
     json['relations'].push(attr);
     attr = {};
   }
-  console.log(json);
-  s = JSON.stringify(json); 
+  // console.log(json);
+  copy_json = json;
+  s = JSON.stringify(json);
+
+  debugger
 }
 
 ///////////////////////////////////////////
@@ -633,6 +637,72 @@ function normalizeTables() {
   )
 }
 
+////////////////////////////////////////////
+////////// UPDATE DIAGRAM //////////////////
+////////////////////////////////////////////
+
+function newDiagram() {
+  $.when(setJSON()).then(
+    $.ajax({
+      type: 'post',
+      url: "http://localhost:5000/api/normalize/diagram",
+      contentType: "application/json",
+      async: false,
+      data: s,
+      success: function(data) {
+        debugger
+        save_data = nodeDataArray;
+        save_link = linkDataArray;
+        data = data.replace(/'/g, '"');
+        data = $.parseJSON(data);
+        updateDiagram(data);
+      }
+    })
+  )
+}
+
+function updateDiagram(data) {
+  linkDataArray = [];
+  nodeDataArray = [];
+
+  entity_list   = data['entities'];
+  relation_list = data['relations'];
+
+  temp = {};
+  item = {};
+  for(var i=0;i<entity_list.length;i++) {
+      temp['key'] = entity_list[i].name;
+      temp['items'] = [];
+      if(typeof entity_list[i].attributes !== 'undefined') {
+        for(var j=0;j<entity_list[i].attributes.length;j++) {
+            item['name'] = entity_list[i].attributes[j].name;
+            
+            if(entity_list[i].attributes[j].isPK == 'True')
+                item['iskey'] = true;
+            else
+                item['iskey'] = false;
+
+            item['figure'] = "Decision";
+            item['color'] = yellowgrad;
+            temp['items'].push(item);
+            item = {};
+        }
+      }
+      nodeDataArray.push(temp);
+      temp = {};
+  }
+
+  temp = {};
+  item = {};
+  for(var i=0;i<relation_list.length;i++) {
+      temp['from'] = relation_list[i].to;
+      temp['to'] = relation_list[i].from;
+      linkDataArray.push(temp);
+      temp = {};
+  }
+  myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+}
+
 //////////////////////////////////////////////
 ///////////// DOCUMENT READY FUNCTION ////////
 //////////////////////////////////////////////
@@ -685,7 +755,6 @@ $(document).ready(function() {
     temp['from'] = document.getElementById('fromTable').value;
     temp['to'] = document.getElementById('toTable').value;
     // temp['text'] = document.getElementById('relation_type').value;
-    debugger
 
     var indexes = $.map(nodeDataArray, function(obj, index) {
         if(obj.key == document.getElementById('fromTable').value) {

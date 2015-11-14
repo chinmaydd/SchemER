@@ -118,7 +118,8 @@ def normalize( entity ):
 	final_list.append(entity)
 
 def ret_normalize(data):
-	global final_list, relation_list
+	global final_list, relation_list, entity_list
+	final_list = []
 	relation_list = data["relations"]
 	entity_list   = data["entities"]
 	for entity in entity_list:

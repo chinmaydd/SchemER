@@ -16,3 +16,7 @@ def post_1():
 @app.route('/api/normalize/', methods=['POST'])
 def post_2():
 	return validate(request.stream.read(), 1)
+
+@app.route('/api/normalize/diagram', methods=['POST'])
+def post_3():
+	return validate(request.stream.read(), 2)
