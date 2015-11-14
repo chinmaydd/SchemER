@@ -2,15 +2,15 @@
 Python code that takes a JSON file (assumed to be coming from the diagrammer)
 and checks whether all constraints / database rules are followed.
 '''
-import json
+import json, pdb, ast
 
+# with open("../data/dummy.json") as data_file:
+# 	data = json.load(data_file)
 
-errors = []
-
-with open("../data/dummy.json") as data_file:
-	data = json.load(data_file)
-
-def validate():
+def validate(data):
+	print data
+	data = ast.literal_eval(data)
+	errors = []
 	# First, validate FK->PK constraint
 	# This involves:
 	# a) ensuring that the FK and PK exist in respective tables
@@ -51,8 +51,11 @@ def validate():
 		if fromType != toType:
 			errors.append("FK ({0}) and PK ({1}) types don't match!".format(fromTable+"."+fromAttr, toTable+"."+toAttr))
 
-validate()
-if len(errors):
-	print "ERRORS:"
-	for idx, error in enumerate(errors):
-		print str(idx+1) + ".", error
+	# validate()
+	err_string = 'Success!'
+	if len(errors):
+		print "ERRORS:"
+		for idx, error in enumerate(errors):
+			err_string += (str(idx+1) + ".", error)
+
+	return err_string

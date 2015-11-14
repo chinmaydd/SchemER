@@ -561,13 +561,16 @@ function generateSQL() {
   var json = {};
   var entity = {};
   var attr;
-  json["entitites"] = [];
+  json["entities"] = [];
   json["relations"] = [];
 
   for(var i=0;i<nodeDataArray.length;i++) {
     entity['name'] = nodeDataArray[i].key;
     entity['attributes'] = [];
-    entity['fds'] = entitites[nodeDataArray[i].key];
+    entity['fds'] = entities[nodeDataArray[i].key];
+    if(typeof entity['fds'] == 'undefined') {
+      entity['fds'] = [];
+    }
     attr = {};
     for(var j=0;j<nodeDataArray[i].items.length;j++) {
       attr['name'] = nodeDataArray[i].items[j].name;
@@ -578,6 +581,8 @@ function generateSQL() {
       entity['attributes'].push(attr);
       attr = {};
     }
+    json['entities'].push(entity);
+    entity = {};
   }
 
   attr = {};
@@ -589,13 +594,16 @@ function generateSQL() {
     attr = {};
   }
   console.log(json);
+  var s = JSON.stringify(json); 
 
   $.ajax({
-    type: "POST",
+    type: 'post',
     url: "http://localhost:5000/api/sql/",
-    data: json,
+    contentType: "application/json",
+    data: s,
     success: function(data) {
-      alert("Hello!");
+      console.log(data);
+      alert(data);
     }
   });
 }

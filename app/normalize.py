@@ -7,8 +7,8 @@ import json
 
 errors = []
 
-with open("../data/dummy.json") as data_file:
-	data = json.load(data_file)
+# with open("../data/dummy.json") as data_file:
+# 	data = json.load(data_file)
 
 
 def subset( list1 , list2 ):

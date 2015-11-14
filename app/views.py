@@ -1,6 +1,7 @@
 from flask import render_template, request
 from app import app
-
+from validate import *
+import pdb
 
 @app.route('/')
 @app.route('/index')
@@ -15,4 +16,4 @@ def index():
 
 @app.route('/api/sql/', methods=['POST'])
 def post():
-	print request.form
+	return validate(request.stream.read())
