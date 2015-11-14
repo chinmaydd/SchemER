@@ -157,7 +157,6 @@ function addFD() {
 
   }
 
-  debugger
   for(var i=0;i<Bselect_value;i++) {
     func = document.getElementById('Bfunc_dep'+i);
     val = func.options[func.selectedIndex].text;
@@ -194,23 +193,31 @@ function changeOptions() {
   var val = foreign.options[foreign.selectedIndex].text;
 
   var form_div = document.getElementById('relation_form');
-  children = form_div.querySelectorAll("[id^='foreignkey']");
+  children = form_div.querySelectorAll("[id^='foreignkey'],p");
   
   Array.prototype.forEach.call( children, function( node ) {
       node.parentNode.removeChild( node );
-  });  
+  });
+
+  // children = form_div.querySelectorAll("p");
+  // Array.prototype.forEach.call( children, function( node ) {
+  //     node.parentNode.removeChild( node );
+  // });
   
   var primary = document.getElementById('fromTable');
   primary = primary.options[primary.selectedIndex].text;
 
   var indexes, keycount;
+  var pkeys = [];
 
   keycount = $.map(nodeDataArray, function(obj, index) {
       var count=0;
       if(obj.key == primary) {
           for(var i=0;i<obj.items.length;i++) {
-            if(obj.items[i].iskey == 'True')
+            if(obj.items[i].iskey == 'True') {
               count++;
+              pkeys.push(obj.items[i].name)
+            }
           }
         return count;
       }
@@ -242,6 +249,17 @@ function changeOptions() {
     for_length += 1;
     form_div.appendChild(temp);
   }
+
+  var z;
+  z = document.createElement('p');
+  z.innerHTML = 'label for:';
+  form_div.appendChild(z);
+
+  for(var i=0;i<pkeys.length;i++) {
+    z = document.createElement('p');
+    z.innerHTML = pkeys[i];
+    form_div.appendChild(z);
+  }
 }
 
 /**
@@ -249,7 +267,7 @@ function changeOptions() {
  */
 function refreshRelationModal() {
   form_div = document.getElementById('relation_form');
-  children = form_div.querySelectorAll('input, option, select, label');
+  children = form_div.querySelectorAll('input, option, select, label, p');
   
   Array.prototype.forEach.call( children, function( node ) {
       node.parentNode.removeChild( node );

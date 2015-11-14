@@ -38,13 +38,13 @@
               <form id='modalform' class="form-horizontal">
                 <div id='tname'></div>
                 <div>
-                <h6>Attribute Name&nbsp;&nbsp;&nbsp;&nbsp;DataType&nbsp;notNULL&nbsp;isUnique&nbsp;isPK<h6>
+                <h6>Attribute Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataType&nbsp;&nbsp;notNULL&nbsp;&nbsp;isUnique&nbsp;&nbsp;isPK<h6>
                 </div>
                 <div id='tattr'></div>
               </form>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-success" onClick="$('#modalform').submit();">OK</button>    
+              <button class="btn btn-success" onClick="$('#modalform').submit();">OK</button>     
               <button type="button" id="add_attr" class="btn btn-default" onClick="addAttribute()">Add attribute</button>
               <button type="button" class="btn btn-danger" onClick="closeModal()">Cancel</button>
             </div>
@@ -59,6 +59,9 @@
               <h4 class="modal-title">Add/Change Relations</h2>
             </div>
             <div class="modal-body">
+              <div>
+                <h6>To Table(Foreign Key)&nbsp;&nbsp;&nbsp;&nbsp;From Table(Primary Key)&nbsp;&nbsp;&nbsp;&nbsp;(Choose Foreign Key)<h6>
+              </div>
               <form id='relation_form'>                    
               </form>
             </div>
