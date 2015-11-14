@@ -2,7 +2,7 @@
 Python code that takes a JSON file (assumed to be coming from the diagrammer) 
 and normalizes it based on the entered functional dependencies (upto 2NF).
 '''
-import json, ast
+import json, ast, copy
 # errors = []
 final_list = []
 relation_list = []
@@ -71,7 +71,7 @@ def normalize( entity ):
 						fd.append( '~'.join([ ','.join(lhsi) , ','.join(rnew) ]) )
 			if( len(attr) -len(lhs) > 0 ):
 				FDvisited =list(set(FDvisited + fduse))
-				attr_list_1 = [ d for d in entity["attributes"] if d["name"] in attr ]
+				attr_list_1 = [ copy.deepcopy(d) for d in entity["attributes"] if d["name"] in attr ]
 				attr_list_2 = [ d for d in entity["attributes"] if d["name"] not in attr or d["name"] in lhs or d["name"] in PK ]
 				new_name = entity["name"]+'_'+str(i)
 				FD_new = fd
