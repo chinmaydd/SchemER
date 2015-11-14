@@ -15,13 +15,13 @@
   </head>
   <body onload="init()">
     <div id="sample">
-      <div id="myDiagram" style="width: 50%; height: 600px;position: fixed;margin: auto;right: 0;left: 0;bottom: 0;top:0;background-color: white; border: solid 2px black;"></div>
+      <div id="myDiagram" style="width: 50%; height: 100px;position: fixed;margin: auto;right: 0;left: 0;bottom: 0;top:0;background-color: white; border: solid 2px black;"></div>
       <br />
       <br />
         <a href="#" onClick="loadModal()" class="btn btn-primary btn-lg">Add Table</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="loadRelationModal()" class="btn btn-primary btn-lg">Add Relation</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" onClick="loadFDModal()" class="btn btn-primary btn-lg">Add FD</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#" onClick="generateSQL()" class="btn btn-success btn-lg">Generate SQL!</a>&nbsp;&nbsp;&nbsp;&nbsp;
-
 
       <div class="modal" id="prompt">
         <div class="modal-dialog">
@@ -61,6 +61,48 @@
         </div>
       </div>
 
+      <div class="modal" id="del">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Are you sure you want to delete this table?</h2>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success" onClick="deleteTable();">OK</button>    
+              <button type="button" class="btn btn-danger" onClick="closeDeleteModal()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+      <div class="modal" id="func_dep">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Add Functional Dependencies</h2>
+            </div>
+            <div class="modal-body">
+              <form id='func_dep_form'>
+                <div id="functable">
+                </div>
+                <div id="funcA">
+                </div>
+                <h6>determines -></h6>
+                <div id="funcB">
+                </div>                
+              </form>
+            </div>            
+            <div class="modal-footer">
+              <button type="button" id="add_Afunc" class="btn btn-default" onClick="addAfunc()">Add dependency</button>
+              <button type="button" id="add_Bfunc" class="btn btn-default" onClick="addBfunc()">Add dependent</button>
+              <button class="btn btn-success" onClick="addFD();">OK</button> 
+              <button type="button" class="btn btn-danger" onClick="closeFuncDepModal()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

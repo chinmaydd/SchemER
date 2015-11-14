@@ -5,8 +5,15 @@ var nodeDataArray = [];
 var linkDataArray = [];
 var tableArray = [];
 var flag = 0;
+var entities = {};
 var count_attr = 0;
-var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad ;
+var current_table;
+var Aselect_value = 0;
+var Bselect_value = 0;
+var global_table_sel;
+var global_option_sel;
+var for_length = 0;
+var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad;
 declareColors();
 
 /**
@@ -14,14 +21,6 @@ declareColors();
  * Add different diagrams to different attributes
  * Add primary key contraints to relations
  */
-
- function closeRelationModal() {
-  $('#relation_prompt').overlay().close();
- }
-
- function closeModal() {
-  $('#prompt').overlay().close();
- }
 
 /* Define several shared brushes */
 function declareColors()
@@ -33,10 +32,190 @@ function declareColors()
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
 
+function addAfunc() {
+  funca = document.getElementById('funcA');
+  var temp = global_option_sel.cloneNode(true);
+  temp.id = "Afunc_dep" + Aselect_value;
+  Aselect_value+=1
+
+  funca.appendChild(temp);
+}
+
+function addBfunc() {
+  funcb = document.getElementById('funcB');
+  var temp = global_option_sel.cloneNode(true);
+  temp.id = "Bfunc_dep" + Aselect_value;
+  Bselect_value+=1
+
+  funcb.appendChild(temp);
+}
+
+function populateFD() {
+  funca = document.getElementById('funcA');
+  funcb = document.getElementById('funcB');
+  var func = document.getElementById('func_dep_table');
+  var val = func.options[func.selectedIndex].text;
+
+  current_table = val;
+
+  indexes = $.map(nodeDataArray, function(obj, index) {
+      if(obj.key == current_table) {
+          return index;
+      }
+  });
+
+  var idx = indexes[0];
+  var opt;
+  var sel1 = document.createElement('select');
+
+  for(var i=0;i<nodeDataArray[idx].items.length;i++) {
+    opt = document.createElement('option');
+    opt.value = nodeDataArray[idx].items[i].name;
+    opt.selected = '';
+    opt.innerHTML = nodeDataArray[idx].items[i].name;
+    sel1.appendChild(opt);    
+  }
+
+  var sel2 = sel1.cloneNode(true);
+  global_option_sel = sel2.cloneNode(true);
+
+  sel1.id = "Afunc_dep" + Aselect_value;
+  Aselect_value += 1;
+  funca.appendChild(sel1);
+
+  sel2.id = "Bfunc_dep" + Bselect_value;
+  Bselect_value += 1;
+  funcb.appendChild(sel2);
+}
+
+function refreshFDModal() {
+  form_div = document.getElementById('func_dep_form');
+  children = form_div.querySelectorAll('option,select,p');
+
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });
+  
+  var sel = document.createElement('select');
+  sel.id = "func_dep_table";
+  var opt;
+
+  opt = document.createElement('option');
+  opt.value = '';
+  opt.innerHTML = '';
+  opt.selected = true;
+  sel.appendChild(opt);
+
+  sel.addEventListener(
+    'change',
+    function(){
+      populateFD();
+    },
+    false
+    ); 
+
+  for(var i=0;i<nodeDataArray.length;i++){
+    opt = document.createElement('option');
+    opt.value = nodeDataArray[i].key;
+    opt.innerHTML = nodeDataArray[i].key;
+    sel.appendChild(opt);
+  }
+  global_table_sel = sel;
+  document.getElementById('functable').appendChild(sel);
+}
+
+function loadFDModal() {
+  $.when(refreshFDModal()).then($('#func_dep').overlay().load());
+}
+
+function closeFuncDepModal() {
+  $('#func_dep').overlay().close();
+}
+
+function addFD() {
+  var str1 = '';
+  var str2 = '';
+
+  var func, val;
+
+  for(var i=0;i<Aselect_value;i++) {
+    func = document.getElementById('Afunc_dep'+i);
+    val = func.options[func.selectedIndex].text;
+
+    str1+=val;
+    if(i!=Aselect_value-1) {
+      str1+=',';
+    }
+
+  }
+
+  for(var i=0;i<Bselect_value;i++) {
+    func = document.getElementById('Bfunc_dep'+i);
+    val = func.options[func.selectedIndex].text;
+
+    str2+=val;
+    if(i!=Bselect_value-1) {
+      str2+=',';
+    }
+  }
+  Aselect_value = 0;
+  Bselect_value = 0;
+
+  current_table = '';
+
+  var func_str = str1 + '~' + str2;
+
+  if(typeof entities[current_table] !== 'undefined' && entities[current_table].length > 0) {
+    entities[current_table].push(func_str);
+  } else {
+    entities[current_table] = [];
+    entities[current_table].push(func_str);
+  }
+  closeFuncDepModal();
+}
+
+function loadTableModal() {
+$('#del').overlay().load();
+}
+
+function closeDeleteModal() {
+$('#del').overlay().close();
+}
+
+function closeRelationModal() {
+$('#relation_prompt').overlay().close();
+}
+
+function closeModal() {
+$('#prompt').overlay().close();
+}
+
+function deleteTable() {
+  var indexes = $.map(linkDataArray, function(obj, index) {
+      if(obj.from == current_table || obj.to == current_table) {
+          return index;
+      }
+  });
+
+  for(var i=indexes.length-1;i>=0;i--) {
+    myDiagram.model.removeLinkData(linkDataArray[indexes[i]])
+  }
+
+  indexes = $.map(nodeDataArray, function(obj, index) {
+      if(obj.key == current_table) {
+          return index;
+      }
+  });
+
+  myDiagram.model.removeNodeData(nodeDataArray[indexes[0]]);
+
+  current_table = '';
+  closeDeleteModal();
+}
+
+
 /** 
  * Create option list for datatype containing values
- * 1. int
- * 2. varchar
  * NEED TO ADD MORE OPTIONS
  */
 function type_select(){
@@ -133,6 +312,7 @@ function loadModal(){
 }
 
 function changeOptions() {
+  for_length = 0;
   var foreign = document.getElementById('toTable');
   var val = foreign.options[foreign.selectedIndex].text;
 
@@ -170,6 +350,11 @@ function changeOptions() {
   var idx = indexes[0];
   var opt;
   var sel = document.createElement('select');
+  // opt = document.createElement('option');
+  // opt.value = '';
+  // opt.innerHTML = '';
+  // opt.selected = true;
+  // sel.appendChild(opt);
 
   for(var i=0;i<nodeDataArray[idx].items.length;i++) {
     opt = document.createElement('option');
@@ -182,12 +367,11 @@ function changeOptions() {
   for(var j=0;j<keycount;j++) {
     var temp = sel.cloneNode(true);
     temp.id = 'foreignkey' + j;
+    for_length += 1;
     form_div.appendChild(temp);
   }
 }
 
-function changeLabel(val) {
-}
 /**
  * Refreshes relation modal
  */
@@ -258,21 +442,11 @@ function refreshRelationModal() {
   type3.value = 'M..N';
   type3.selected = '';
 
-  var primary = document.createElement('label');
-  primary.id = ''
-  primary.innerHTML = '';
-
-  // var foreign = document.createElement('select');
-  // foreign.id = 'foreignkey';
-
   relation_type.appendChild(type1);
   relation_type.appendChild(type2);
   relation_type.appendChild(type3);
 
   form_div.appendChild(relation_type);
-  form_div.appendChild(primary);
-  // form_div.appendChild(foreign);
-
 }
 
 /**
@@ -280,16 +454,6 @@ function refreshRelationModal() {
  */
 function loadRelationModal(){
   $.when(refreshRelationModal()).then($('#relation_prompt').overlay().load());
-}
-
-/**
- * Checks if type of update is add/edit
- */
-function checkTypeOfUpdate(e) {
-  if(flag == 0)
-    addTable(e);
-  else
-    modifyTable(e);
 }
 
 /**
@@ -330,7 +494,7 @@ function modifyTable(tableData){
  */
 function addTable(tableData){
     var name = tableData['table_name'];
-    if(name == '') {
+    if(name == '' || name.indexOf(' ') > -1) {
       return false;
     }
     else {
@@ -339,7 +503,10 @@ function addTable(tableData){
       var temp = {};
 
       for(var i=0;i<attributes.length;i++){
-        if(attributes[i].attribute_name != '') {
+        if(attributes[i].attribute_name == '' || attributes[i].attribute_name.indexOf(' ') > -1) {
+          console.log('');
+        }
+        else {
           temp['name'] = attributes[i].attribute_name;
           temp['iskey'] = attributes[i].isPK;
           temp['figure'] = "Decision";
@@ -348,7 +515,7 @@ function addTable(tableData){
           temp['notNULL'] = attributes[i].notNULL;
           temp['isUnique'] = attributes[i].isUnique;
           items_array.push(temp);
-          temp = {};
+          temp = {};          
         }
       }
 
@@ -378,6 +545,7 @@ function generateSQL() {
   for(var i=0;i<nodeDataArray.length;i++) {
     entity['name'] = nodeDataArray[i].key;
     entity['attributes'] = [];
+    entity['fds'] = entitites[nodeDataArray[i].key];
     attr = {};
     for(var j=0;j<nodeDataArray[i].items.length;j++) {
       attr['name'] = nodeDataArray[i].items[j].name;
@@ -398,7 +566,6 @@ function generateSQL() {
     json['relations'].push(attr);
     attr = {};
   }
-  debugger
   console.log(json);
 
   $.ajax({
@@ -412,18 +579,10 @@ function generateSQL() {
 }
 
 /**
- * Binds checkTypeOfUpdate() function to modal submit at document.ready()
+ * Binds addTable() function to modal submit at document.ready()
  */
 $(document).ready(function() {
     $(".modal").overlay({
-
-      /* Mask tweaks suitable for modal dialogs */
-      // mask: {
-      //   color: '#ebecff',
-      //   loadSpeed: 200,
-      //   opacity: 0.9
-      // },
-
       closeOnClick: false,
       api: true
     });
@@ -448,9 +607,7 @@ $(document).ready(function() {
         key_val = {};
       }
 
-      /* Add multiple attribute support */
-
-      checkTypeOfUpdate({table_name: name, attribute: attributes});  
+      addTable({table_name: name, attribute: attributes});  
 
       /* console.log(input); */
       $("#prompt").overlay().close();
@@ -466,27 +623,47 @@ $(document).ready(function() {
     temp['to'] = document.getElementById('toTable').value;
     temp['text'] = document.getElementById('relation_type').value;
 
+    var indexes = $.map(nodeDataArray, function(obj, index) {
+        if(obj.key == document.getElementById('fromTable').value) {
+            return index;
+        }
+    });
+
+    var str = '';
+    indexes = $.map(nodeDataArray[indexes].items, function(obj, index) {
+        if(obj.iskey == true) {
+            str += obj.name;
+            str += ',';
+            return obj.name;
+        }
+    });
+
+    temp['PK'] = str;
+    str = '';
+
+    for(var i=0;i<for_length;i++) {
+      debugger
+      var foreign = document.getElementById('foreignkey'+i);
+      var val = foreign.options[foreign.selectedIndex].text;
+
+      str += val;
+      str += ',';
+    }
+
+    temp['FK'] = str;
     addRelation(temp);
 
     $("#relation_prompt").overlay().close();
     this.reset();
 
     return e.preventDefault();
-    // { from: "Products", to: "Suppliers", text: "0..N", toText: "1" }
 
   });
 });
 
 /*************************************************************************************************************
 **************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
-**************************************************************************************************************
 */
-
 
 /* GoJS object initializer */
 function init() {
@@ -596,24 +773,19 @@ function init() {
 
     myDiagram.addDiagramListener("ObjectDoubleClicked",
       function(e) {
-        var table_name = e.subject.part.data.key;
-        var attribute  = e.subject.part.data.items[0].name;
-        updateModal({'table_name': table_name, 'attribute': attribute});
-        // if (!(part instanceof go.Link))
+        current_table = e.subject.part.data.key;
+        loadTableModal();
     });
 
-  // create the model for the E-R diagram
-  // Array.prototype.push.apply(nodeDataArray, [
-  //   { key: "Products",
-  //     items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad }
-  //              { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
-  //              { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
-  //              { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
-  // ]);
-  // Array.prototype.push.apply(linkDataArray, [
-  //   { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
-  //   { from: "Products", to: "Categories", text: "0..N", toText: "1" },
-  //   { from: "Order Details", to: "Products", text: "0..N", toText: "1" }
-  // ]);
+  /**
+    create the model for the E-R diagram
+    Array.prototype.push.apply(nodeDataArray, [
+      { key: "Products",
+        items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad }
+    ]);
+    Array.prototype.push.apply(linkDataArray, [
+      { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
+    ]);
+  */
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
