@@ -3,3 +3,6 @@ flask/*
 
 # Python bytecode
 *.pyc
+
+# No point in committing SQL statements
+src/data/SQL.in
