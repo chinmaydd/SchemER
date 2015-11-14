@@ -50,7 +50,7 @@ def generate(data):
 			if(attribute["notNULL"] == "True"):
 				blocks.append("NOT NULL")
 				flag = True
-			if(attribute["isUNIQUE"] == "True"):
+			if(attribute["isUnique"] == "True"):
 				blocks.append("UNIQUE")
 				flag = True
 

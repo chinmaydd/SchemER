@@ -358,7 +358,7 @@ function deleteTable() {
 function type_select(){
   var sel = document.createElement('select');
   sel.id = count_attr;
-  sel.className = 'data_type';
+  sel.className = 'datatype';
 
   var opt1 = document.createElement('option');
   opt1.value="int";
@@ -513,7 +513,7 @@ function addTable(tableData){
           temp['iskey'] = attributes[i].isPK;
           temp['figure'] = "Decision";
           temp['color'] = yellowgrad;
-          temp['data_type'] = attributes[i].data_type;
+          temp['datatype'] = attributes[i].datatype;
           temp['notNULL'] = attributes[i].notNULL;
           temp['isUnique'] = attributes[i].isUnique;
           items_array.push(temp);
@@ -554,10 +554,15 @@ function setJSON() {
     attr = {};
     for(var j=0;j<nodeDataArray[i].items.length;j++) {
       attr['name'] = nodeDataArray[i].items[j].name;
-      attr['datatype'] = nodeDataArray[i].items[j].data_type;
+      attr['datatype'] = nodeDataArray[i].items[j].datatype;
       attr['notNULL'] = nodeDataArray[i].items[j].notNULL;
-      attr['isUNIQUE'] = nodeDataArray[i].items[j].isUnique;
-      attr['isPK'] = nodeDataArray[i].items[j].iskey;
+      attr['isUnique'] = nodeDataArray[i].items[j].isUnique;
+      
+      if(nodeDataArray[i].items[j].iskey == true)
+        attr['isPK'] = 'True';
+      else
+        attr['isPK'] = 'False';
+
       entity['attributes'].push(attr);
       attr = {};
     }
@@ -578,7 +583,6 @@ function setJSON() {
   copy_json = json;
   s = JSON.stringify(json);
 
-  debugger
 }
 
 ///////////////////////////////////////////
@@ -676,6 +680,9 @@ function updateDiagram(data) {
       if(typeof entity_list[i].attributes !== 'undefined') {
         for(var j=0;j<entity_list[i].attributes.length;j++) {
             item['name'] = entity_list[i].attributes[j].name;
+            item['datatype'] = entity_list[i].attributes[j].datatype;
+            item['notNULL'] = entity_list[i].attributes[j].notNULL;
+            item['isUnique'] = entity_list[i].attributes[j].isUnique;
             
             if(entity_list[i].attributes[j].isPK == 'True')
                 item['iskey'] = true;
@@ -727,7 +734,7 @@ $(document).ready(function() {
       for(var i=0;i<count_attr;i++){
         temp_attr = $("[id="+i+"]");
         for(var j=0;j<temp_attr.length;j++){
-          if(temp_attr[j].className == 'attribute_name' || temp_attr[j].className == 'data_type')
+          if(temp_attr[j].className == 'attribute_name' || temp_attr[j].className == 'datatype')
             key_val[temp_attr[j].className] = temp_attr[j].value;
           else {
             if(temp_attr[j].checked)
@@ -739,7 +746,6 @@ $(document).ready(function() {
         attributes.push(key_val);
         key_val = {};
       }
-
       addTable({table_name: name, attribute: attributes});  
 
       /* console.log(input); */

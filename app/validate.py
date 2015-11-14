@@ -11,6 +11,7 @@ from normalize import *
 
 def validate(data, flag):
 	# print data
+	print data
 	data = ast.literal_eval(data)
 	errors = []
 	# First, validate FK->PK constraint
