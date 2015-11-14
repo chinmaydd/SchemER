@@ -40,8 +40,8 @@ def normalize( entity ):
 	for attr in entity["attributes"]:
 		if attr["isPK"] == "True":
 			PK.append( attr["name"] )
-	FK = FK
-	PK = PK
+	FK = [ s for s in FK if s != '' ]
+	PK = [ s for s in PK if s != '' ]
 	FDvisited = []
 	FD_nonredundant = []
 	for i in range(len(FD)):

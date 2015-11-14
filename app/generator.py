@@ -34,6 +34,8 @@ def generate(data):
 	        	pkeys.append(attribute["name"])
 	    if len(pkeys) > 0:
 	    	chunks.append("PRIMARY KEY (" + ', '.join(pkeys) + ")")
+	    else:
+	    	chunks.pop()
 	    
 	    chunks.append("\n);\n")
 	    ddl.append(''.join(chunks))
@@ -72,6 +74,12 @@ def generate(data):
 		table2 = relation["from"]
 		FK = relation["FK"]
 		PK = relation["PK"]
+		FK_list = FK.split(',')
+		PK_list = PK.split(',')
+		FK_list = [ s for s in FK_list if s != '' ]
+		PK_list = [ s for s in PK_list if s != '' ]
+		FK = ','.join(FK_list)
+		PK = ','.join(PK_list)
 		# add foreign key constraint
 		chunks.append("ALTER TABLE "+ table1 + "\n")
 		chunks.append("ADD FOREIGN KEY ("+FK+")\n")
