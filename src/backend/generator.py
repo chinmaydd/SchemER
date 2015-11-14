@@ -3,9 +3,16 @@ Python code that takes a valid JSON file and produces the corresponding SQL
 DDL for table generation.
 '''
 import json
+import sys
 from pprint import pprint
 
-with open('../data/dummy.json') as data_file:
+try:
+	f = sys.argv[1]
+except:
+	print "Usage: python generator.py <pathToJSON>"
+	sys.exit(1)
+
+with open(f) as data_file:
     data = json.load(data_file)
 
 # Process entities first
@@ -16,13 +23,15 @@ ddl = []
 #Table Creation
 for entity in entity_list:
     chunks = []
+    pkeys = []
     chunks.append("CREATE TABLE " + entity["name"] + "\n(\n")
     for attribute in entity["attributes"]:
         chunks.append(attribute["name"] + " " + attribute["datatype"])
         chunks.append(",\n")
-    # remove last comma
-    chunks.pop()
-    chunks.append("\n)")
+        if attribute["isPK"] == "True":
+        	pkeys.append(attribute["name"])
+    chunks.append("PRIMARY KEY (" + ', '.join(pkeys) + ")")
+    chunks.append("\n);\n")
     ddl.append(''.join(chunks))
 
 #Adding constraints to tables
@@ -40,9 +49,9 @@ for entity in entity_list:
 		if(attribute["isUNIQUE"] == "True"):
 			blocks.append("UNIQUE")
 			flag = True
-		if(attribute["isPK"] == "True"):
-			blocks.append("PRIMARY KEY")
-			flag = True
+		# if(attribute["isPK"] == "True"):
+		# 	blocks.append("PRIMARY KEY")
+		# 	flag = True
 		# if(attribute["CHECK"] != ""):
 		# 	blocks.append("CHECK(" + attribute["CHECK"] + ")")
 		# 	flag = True
@@ -57,7 +66,7 @@ for entity in entity_list:
 		chunks.append(",\n")
 	# remove last comma
 	chunks.pop()
-	chunks.append(";")
+	chunks.append(";\n")
 	if(mflag):
 		ddl.append(' '.join(chunks))
 
@@ -118,7 +127,9 @@ for relation in relation_list:
 		# if(mflag):
 		# 	ddl.append(' '.join(chunks))
 
+fd = open('../data/SQL.in', 'w')
 
 for d in ddl:
-    print d
-			
+    fd.write(d)
+
+fd.close()

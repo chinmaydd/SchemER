@@ -1,0 +1,28 @@
+'''
+Python code that takes valid SQL and interfaces with MySQL to execute it.
+'''
+import MySQLdb
+import sys
+
+
+db = MySQLdb.connect(host="localhost", # your host, usually localhost
+                     user="root", # your username
+                     passwd="password", # your password
+                     db="dummy") # name of the data base
+
+# you must create a Cursor object. It will let
+#  you execute all the queries you need
+cur = db.cursor()
+
+try:
+    fname = sys.argv[1]
+except:
+    print "Usage: python databaseHandler.py <pathToSQLFile>"
+    sys.exit(0)
+
+f = open(fname, 'r')
+sql = f.read()
+f.close()
+
+# Use all the SQL you like
+cur.execute(sql)

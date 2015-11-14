@@ -107,5 +107,3 @@ for entity in entity_list:
 final_dict = { "entities" : final_list , "relations" : relation_list}
 with open('../data/dummynormal.json', 'w') as fp:
     json.dump(final_dict, fp)
-# print final_list
-# print relation_list	

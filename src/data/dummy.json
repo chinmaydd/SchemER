@@ -39,7 +39,7 @@
             "attributes":[
                 {
                     "name": "attr1",
-                    "datatype":"varchar(1000)",
+                    "datatype":"int(50)",
                     "notNULL":"True",
                     "isUNIQUE":"True",
                     "isPK":"True",
