@@ -68,8 +68,8 @@ def generate(data):
 
 	for relation in relation_list:
 		chunks = []
-		table1 = relation["from"]
-		table2 = relation["to"]
+		table1 = relation["to"]
+		table2 = relation["from"]
 		FK = relation["FK"]
 		PK = relation["PK"]
 		# add foreign key constraint

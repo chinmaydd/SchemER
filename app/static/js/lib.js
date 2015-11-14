@@ -50,13 +50,15 @@ function addAfunc() {
 function addBfunc() {
   funcb = document.getElementById('funcB');
   var temp = global_option_sel.cloneNode(true);
-  temp.id = "Bfunc_dep" + Aselect_value;
+  temp.id = "Bfunc_dep" + Bselect_value;
   Bselect_value+=1
 
   funcb.appendChild(temp);
 }
 
 function populateFD() {
+  Aselect_value = 0;
+  Bselect_value = 0;
   funca = document.getElementById('funcA');
   funcb = document.getElementById('funcB');
   var func = document.getElementById('func_dep_table');
@@ -155,6 +157,7 @@ function addFD() {
 
   }
 
+  debugger
   for(var i=0;i<Bselect_value;i++) {
     func = document.getElementById('Bfunc_dep'+i);
     val = func.options[func.selectedIndex].text;
@@ -513,6 +516,9 @@ function addTable(tableData){
           temp['iskey'] = attributes[i].isPK;
           temp['figure'] = "Decision";
           temp['color'] = yellowgrad;
+          if(temp['iskey'] == 'True') {
+            temp['color'] = greengrad;
+          }
           temp['datatype'] = attributes[i].datatype;
           temp['notNULL'] = attributes[i].notNULL;
           temp['isUnique'] = attributes[i].isUnique;
@@ -654,7 +660,6 @@ function newDiagram() {
       async: false,
       data: s,
       success: function(data) {
-        debugger
         save_data = nodeDataArray;
         save_link = linkDataArray;
         data = data.replace(/'/g, '"');
@@ -690,7 +695,11 @@ function updateDiagram(data) {
                 item['iskey'] = false;
 
             item['figure'] = "Decision";
+
             item['color'] = yellowgrad;
+            if(item['iskey']) {
+              item['color'] = greengrad;
+            }
             temp['items'].push(item);
             item = {};
         }
@@ -769,8 +778,8 @@ $(document).ready(function() {
     });
 
     var str = '';
-    indexes = $.map(nodeDataArray[indexes[0]].items, function(obj, index) {
-        if(obj.iskey == true) {
+    var temp_1 = $.map(nodeDataArray[indexes[0]].items, function(obj, index) {
+        if(obj.iskey == 'True' || obj.iskey == true) {
             str += obj.name;
             str += ',';
             return obj.name;

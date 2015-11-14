@@ -35,7 +35,7 @@ def normalize( entity ):
 	PK = [ ]
 	FD = entity["fds"]
 	for relation in relation_list:
-		if( relation["from"] == entity["name"] ):
+		if( relation["to"] == entity["name"] ):
 			FK = list( set( FK + relation["FK"].split(',') ) )
 	for attr in entity["attributes"]:
 		if attr["isPK"] == "True":
@@ -108,8 +108,8 @@ def normalize( entity ):
 						newentity["attributes"][k]["isPK"] = "True"
 				newentity["fds"] = FD_new
 				relation = dict()
-				relation["from"] = entity["name"]
-				relation["to"] = new_name
+				relation["to"] = entity["name"]
+				relation["from"] = new_name
 				relation["FK"] = ','.join(lhs)
 				relation["PK"] = ','.join(lhs)
 				relation_list.append(relation)

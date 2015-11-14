@@ -29,8 +29,8 @@ def validate(data, flag):
 	for relation in relation_list:
 		fromTable = relation["from"]
 		toTable = relation["to"]
-		fromAttrs = relation["FK"].split(",")
-		toAttrs = relation["PK"].split(",")
+		fromAttrs = relation["PK"].split(",")
+		toAttrs = relation["FK"].split(",")
 		fromNotFound = toNotFound = True
 		fromTypes = ["" for x in range(len(fromAttrs))]
 		toTypes = ["" for x in range(len(toAttrs))]
