@@ -10,8 +10,6 @@ from normalize import *
 # 	data = json.load(data_file)
 
 def validate(data, flag):
-	# print data
-	print data
 	data = ast.literal_eval(data)
 	errors = []
 	# First, validate FK->PK constraint
@@ -29,8 +27,10 @@ def validate(data, flag):
 	for relation in relation_list:
 		fromTable = relation["from"]
 		toTable = relation["to"]
-		fromAttrs = relation["PK"].split(",")
-		toAttrs = relation["FK"].split(",")
+		fromAttrs = relation["FK"].split(",")
+		fromAttrs =[ s for s in fromAttrs if s != '' ]
+		toAttrs = relation["PK"].split(",")
+		toAttrs =  [s for s in toAttrs if s != '' ]
 		fromNotFound = toNotFound = True
 		fromTypes = ["" for x in range(len(fromAttrs))]
 		toTypes = ["" for x in range(len(toAttrs))]
