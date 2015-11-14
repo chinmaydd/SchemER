@@ -2,14 +2,13 @@
 Python code that takes a JSON file (assumed to be coming from the diagrammer) 
 and normalizes it based on the entered functional dependencies (upto 2NF).
 '''
-import json
+import json, ast, copy
+# errors = []
+final_list = []
+relation_list = []
 
-
-errors = []
-
-with open("../data/dummy.json") as data_file:
-	data = json.load(data_file)
-
+# with open("../data/dummy.json") as data_file:
+# 	data = json.load(data_file)
 
 def subset( list1 , list2 ):
 	for l in list1:
@@ -22,7 +21,6 @@ def com_el( list1 ,  list2):
 		if l in list2:
 			return True
 	return False
-
 
 def normalize( entity ):
 	FK = [ ]
@@ -73,7 +71,7 @@ def normalize( entity ):
 						fd.append( '~'.join([ ','.join(lhsi) , ','.join(rnew) ]) )
 			if( len(attr) -len(lhs) > 0 ):
 				FDvisited =list(set(FDvisited + fduse))
-				attr_list_1 = [ d for d in entity["attributes"] if d["name"] in attr ]
+				attr_list_1 = [ copy.deepcopy(d) for d in entity["attributes"] if d["name"] in attr ]
 				attr_list_2 = [ d for d in entity["attributes"] if d["name"] not in attr or d["name"] in lhs or d["name"] in PK ]
 				new_name = entity["name"]+'_'+str(i)
 				FD_new = fd
@@ -95,15 +93,17 @@ def normalize( entity ):
 	entity["fds"] = [ FD[i] for i in range(len(FD)) if i not in FDvisited]
 	final_list.append(entity)
 
+def ret_normalize(data):
+	print data
+	data = ast.literal_eval(data)
+	global final_list, relation_list
+	relation_list = data["relations"]
+	entity_list   = data["entities"]
+	
+	for entity in entity_list:
+		normalize(entity)
 
-global final_list
-final_list = []
-global relation_list
-relation_list = data["relations"]
-entity_list = data["entities"]
-for entity in entity_list:
-	normalize(entity)
-
-final_dict = { "entities" : final_list , "relations" : relation_list}
-with open('../data/dummynormal.json', 'w') as fp:
-    json.dump(final_dict, fp)
+	final_dict = { "entities" : final_list , "relations" : relation_list}
+	return str(final_dict)
+	# with open('../data/dummynormal.json', 'w') as fp:
+	#     json.dump(final_dict, fp)

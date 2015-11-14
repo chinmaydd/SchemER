@@ -13,13 +13,12 @@ var Bselect_value = 0;
 var global_table_sel;
 var global_option_sel;
 var for_length = 0;
+var s;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad;
 declareColors();
 
 /**
- * Update table with multiple attributes
  * Add different diagrams to different attributes
- * Add primary key contraints to relations
  */
 
 /* Define several shared brushes */
@@ -31,6 +30,10 @@ function declareColors()
   redgrad    = go.GraphObject.make(go.Brush, "Linear", { 0: "rgb(206, 106, 100)", 1: "rgb(180, 56, 50)" });
   lightgrad  = go.GraphObject.make(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
 }
+
+/////////////////////////////
+/////// FD functions ////////
+/////////////////////////////
 
 function addAfunc() {
   funca = document.getElementById('funcA');
@@ -161,7 +164,7 @@ function addFD() {
   Aselect_value = 0;
   Bselect_value = 0;
 
-  current_table = '';
+  // current_table = '';
 
   var func_str = str1 + '~' + str2;
 
@@ -171,147 +174,16 @@ function addFD() {
     entities[current_table] = [];
     entities[current_table].push(func_str);
   }
+  current_table
   closeFuncDepModal();
 }
 
-function loadTableModal() {
-$('#del').overlay().load();
-}
-
-function closeDeleteModal() {
-$('#del').overlay().close();
-}
-
-function closeRelationModal() {
-$('#relation_prompt').overlay().close();
-}
-
-function closeModal() {
-$('#prompt').overlay().close();
-}
-
-function deleteTable() {
-  var indexes = $.map(linkDataArray, function(obj, index) {
-      if(obj.from == current_table || obj.to == current_table) {
-          return index;
-      }
-  });
-
-  for(var i=indexes.length-1;i>=0;i--) {
-    myDiagram.model.removeLinkData(linkDataArray[indexes[i]])
-  }
-
-  indexes = $.map(nodeDataArray, function(obj, index) {
-      if(obj.key == current_table) {
-          return index;
-      }
-  });
-
-  myDiagram.model.removeNodeData(nodeDataArray[indexes[0]]);
-
-  current_table = '';
-  closeDeleteModal();
-}
-
-
-/** 
- * Create option list for datatype containing values
- * NEED TO ADD MORE OPTIONS
- */
-function type_select(){
-  var sel = document.createElement('select');
-  sel.id = count_attr;
-  sel.className = 'data_type';
-
-  var opt1 = document.createElement('option');
-  opt1.value="int";
-  opt1.selected = "";
-  opt1.innerHTML = "int";
-
-  var opt2 = document.createElement('option');
-  opt2.value = "varchar";
-  opt2.selected = "";
-  opt2.innerHTML = "varchar";
-
-  var opt3 = document.createElement('option');
-  opt3.value = "date";
-  opt3.selected = "";
-  opt3.innerHTML = "date";  
-
-  sel.appendChild(opt1);
-  sel.appendChild(opt2);
-  sel.appendChild(opt3);
-
-  return sel;
-}
-
-/**
- * Create check option for given string
- */
-function add_checkbox(checkbox_for){
-  var checkbox = document.createElement('input');
-  checkbox.type = "checkbox";
-  checkbox.name = checkbox_for;
-  checkbox.id = count_attr;
-  checkbox.className = checkbox_for;
-
-  return checkbox;
-}
-
-/**
- * Adds a new attribute to the input modal
- */
-function addAttribute(){
- var form = document.getElementById('modalform');
-
- var element = document.createElement('input');
- element.id = count_attr;
- element.className = 'attribute_name';
- form.appendChild(element);
-
- var typ, null_checkbox, uniq_checkbox, pk_checkbox, close_button;
-
- $.when(typ = type_select()).then(form.appendChild(typ));
- $.when(null_checkbox = add_checkbox('notNULL')).then(form.appendChild(null_checkbox));
- $.when(uniq_checkbox = add_checkbox('isUnique')).then(form.appendChild(uniq_checkbox));
- $.when(pk_checkbox = add_checkbox('isPK')).then(form.appendChild(pk_checkbox));
-
- form.appendChild(document.createElement('br'));
- form.appendChild(document.createElement('br'));
-
- count_attr+=1;
-}
-
-/**
- * Updates the modal as required
- */
-function refreshModal(){
-  count_attr = 0;
-  form_div = document.getElementById('modalform');
-  children = form_div.querySelectorAll('input,br,option,select');
-
-  Array.prototype.forEach.call( children, function( node ) {
-      node.parentNode.removeChild( node );
-  });
-
-  var inp = document.createElement('input');
-  inp.id = 'table_name';
-
-  form_div.appendChild(document.createElement('br'));
-  form_div.appendChild(inp);
-  form_div.appendChild(document.createElement('br'));
-  form_div.appendChild(document.createElement('br'));
-}
-
-/**
- * Loads table modal dialog screen
- */
-function loadModal(){
-  flag = 0;
-  $.when(refreshModal()).then($('#prompt').overlay().load());
-}
+/////////////////////////////
+//// Relation functions /////
+/////////////////////////////
 
 function changeOptions() {
+  debugger
   for_length = 0;
   var foreign = document.getElementById('toTable');
   var val = foreign.options[foreign.selectedIndex].text;
@@ -331,8 +203,9 @@ function changeOptions() {
   keycount = $.map(nodeDataArray, function(obj, index) {
       var count=0;
       if(obj.key == primary) {
+        debugger
           for(var i=0;i<obj.items.length;i++) {
-            if(obj.items[i].iskey == true)
+            if(obj.items[i].iskey == 'True')
               count++;
           }
         return count;
@@ -350,11 +223,6 @@ function changeOptions() {
   var idx = indexes[0];
   var opt;
   var sel = document.createElement('select');
-  // opt = document.createElement('option');
-  // opt.value = '';
-  // opt.innerHTML = '';
-  // opt.selected = true;
-  // sel.appendChild(opt);
 
   for(var i=0;i<nodeDataArray[idx].items.length;i++) {
     opt = document.createElement('option');
@@ -449,12 +317,167 @@ function refreshRelationModal() {
   form_div.appendChild(relation_type);
 }
 
+function addRelation(linkData) {
+  linkDataArray.push(linkData);
+  myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+}
+
 /**
  * Loads relation modal dialog screen
  */
 function loadRelationModal(){
   $.when(refreshRelationModal()).then($('#relation_prompt').overlay().load());
 }
+
+function closeRelationModal() {
+$('#relation_prompt').overlay().close();
+}
+
+////////////////////////////////////////
+/////// DELETE TABLE FUNCTIONS /////////
+////////////////////////////////////////
+
+function loadDeleteModal() {
+$('#del').overlay().load();
+}
+
+function closeDeleteModal() {
+$('#del').overlay().close();
+}
+
+function deleteTable() {
+  var indexes = $.map(linkDataArray, function(obj, index) {
+      if(obj.from == current_table || obj.to == current_table) {
+          return index;
+      }
+  });
+
+  for(var i=indexes.length-1;i>=0;i--) {
+    myDiagram.model.removeLinkData(linkDataArray[indexes[i]])
+  }
+
+  indexes = $.map(nodeDataArray, function(obj, index) {
+      if(obj.key == current_table) {
+          return index;
+      }
+  });
+
+  myDiagram.model.removeNodeData(nodeDataArray[indexes[0]]);
+
+  current_table = '';
+  closeDeleteModal();
+}
+
+////////////////////////////////////////
+///////// MODAL REFRESH FUNCTIONS //////
+////////////////////////////////////////
+
+/** 
+ * Create option list for datatype containing values
+ * NEED TO ADD MORE OPTIONS
+ */
+function type_select(){
+  var sel = document.createElement('select');
+  sel.id = count_attr;
+  sel.className = 'data_type';
+
+  var opt1 = document.createElement('option');
+  opt1.value="int";
+  opt1.selected = "";
+  opt1.innerHTML = "int";
+
+  var opt2 = document.createElement('option');
+  opt2.value = "varchar";
+  opt2.selected = "";
+  opt2.innerHTML = "varchar";
+
+  var opt3 = document.createElement('option');
+  opt3.value = "date";
+  opt3.selected = "";
+  opt3.innerHTML = "date";  
+
+  sel.appendChild(opt1);
+  sel.appendChild(opt2);
+  sel.appendChild(opt3);
+
+  return sel;
+}
+
+/**
+ * Create check option for given string
+ */
+function add_checkbox(checkbox_for){
+  var checkbox = document.createElement('input');
+  checkbox.type = "checkbox";
+  checkbox.name = checkbox_for;
+  checkbox.id = count_attr;
+  checkbox.className = checkbox_for;
+
+  return checkbox;
+}
+
+/**
+ * Adds a new attribute to the input modal
+ */
+function addAttribute(){
+ var form = document.getElementById('tattr');
+
+ var element = document.createElement('input');
+ element.id = count_attr;
+ element.className = 'attribute_name';
+ form.appendChild(element);
+
+ var typ, null_checkbox, uniq_checkbox, pk_checkbox, close_button;
+
+ form.appendChild(document.createTextNode( '\u00A0' )); 
+ $.when(typ = type_select()).then(form.appendChild(typ));
+ form.appendChild(document.createTextNode( '\u00A0' ));
+ $.when(null_checkbox = add_checkbox('notNULL')).then(form.appendChild(null_checkbox));
+ form.appendChild(document.createTextNode( '\u00A0' ));
+ $.when(uniq_checkbox = add_checkbox('isUnique')).then(form.appendChild(uniq_checkbox));
+ form.appendChild(document.createTextNode( '\u00A0' ));
+ $.when(pk_checkbox = add_checkbox('isPK')).then(form.appendChild(pk_checkbox));
+
+ form.appendChild(document.createElement('br'));
+ form.appendChild(document.createElement('br'));
+
+ count_attr+=1;
+}
+
+/**
+ * Updates the modal as required
+ */
+function refreshModal(){
+  count_attr = 0;
+  form_div = document.getElementById('modalform');
+  children = form_div.querySelectorAll('input,br,option,select');
+
+  Array.prototype.forEach.call( children, function( node ) {
+      node.parentNode.removeChild( node );
+  });
+
+  var inp = document.createElement('input');
+  inp.id = 'table_name';
+  
+  var tdiv = document.getElementById('tname');
+
+  tdiv.appendChild(document.createElement('br'));
+  tdiv.appendChild(inp);
+  tdiv.appendChild(document.createElement('br'));
+  tdiv.appendChild(document.createElement('br'));
+}
+
+/**
+ * Loads table modal dialog screen
+ */
+function loadModal(){
+  flag = 0;
+  $.when(refreshModal()).then($('#prompt').overlay().load());
+}
+
+///////////////////////////////////////////
+////////// ADD TABLE FUNCTIONS ////////////
+///////////////////////////////////////////
 
 /**
  * Updates modal dialog input 
@@ -527,25 +550,28 @@ function addTable(tableData){
   }
 }
 
-function addRelation(linkData) {
-  linkDataArray.push(linkData);
-  myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+function closeModal() {
+$('#prompt').overlay().close();
 }
 
-/**
- * Function call to generate SQL
- */
-function generateSQL() {
+/////////////////////////////////////
+/////////// GENERATE JSON ///////////
+/////////////////////////////////////
+
+function setJSON() {
   var json = {};
   var entity = {};
   var attr;
-  json["entitites"] = [];
+  json["entities"] = [];
   json["relations"] = [];
 
   for(var i=0;i<nodeDataArray.length;i++) {
     entity['name'] = nodeDataArray[i].key;
     entity['attributes'] = [];
-    entity['fds'] = entitites[nodeDataArray[i].key];
+    entity['fds'] = entities[nodeDataArray[i].key];
+    if(typeof entity['fds'] == 'undefined') {
+      entity['fds'] = [];
+    }
     attr = {};
     for(var j=0;j<nodeDataArray[i].items.length;j++) {
       attr['name'] = nodeDataArray[i].items[j].name;
@@ -556,6 +582,8 @@ function generateSQL() {
       entity['attributes'].push(attr);
       attr = {};
     }
+    json['entities'].push(entity);
+    entity = {};
   }
 
   attr = {};
@@ -563,20 +591,58 @@ function generateSQL() {
     attr['from'] = linkDataArray[i].from;
     attr['to'] = linkDataArray[i].to;
     attr['type'] = linkDataArray[i].text;
+    attr['PK'] = linkDataArray[i].PK;
+    attr['FK'] = linkDataArray[i].FK;
     json['relations'].push(attr);
     attr = {};
   }
   console.log(json);
-
-  $.ajax({
-    type: "POST",
-    url: "http://localhost:5000/api/sql/",
-    data: json,
-    success: function(data) {
-      alert("Hello!");
-    }
-  });
+  s = JSON.stringify(json); 
 }
+
+///////////////////////////////////////////
+///// FUNCTION CALL FOR SQL Query Gen /////
+///////////////////////////////////////////
+
+function generateSQL() {
+  $.when(setJSON()).then(
+    $.ajax({
+      type: 'post',
+      url: "http://localhost:5000/api/sql/",
+      contentType: "application/json",
+      async: false,
+      data: s,
+      success: function(data) {
+        console.log(data);
+        alert(data);
+      }
+    })
+  )
+}
+
+///////////////////////////////////////////
+///// FUNCTION CALL FOR NORMALIZATION /////
+///////////////////////////////////////////
+
+function normalizeTables() {
+  $.when(setJSON()).then(
+    $.ajax({
+      type: 'post',
+      url: "http://localhost:5000/api/normalize/",
+      contentType: "application/json",
+      async: false,
+      data: s,
+      success: function(data) {
+        console.log(data);
+        alert(data);
+      }
+    })
+  )
+}
+
+//////////////////////////////////////////////
+///////////// DOCUMENT READY FUNCTION ////////
+//////////////////////////////////////////////
 
 /**
  * Binds addTable() function to modal submit at document.ready()
@@ -600,8 +666,12 @@ $(document).ready(function() {
         for(var j=0;j<temp_attr.length;j++){
           if(temp_attr[j].className == 'attribute_name' || temp_attr[j].className == 'data_type')
             key_val[temp_attr[j].className] = temp_attr[j].value;
-          else
-            key_val[temp_attr[j].className] = temp_attr[j].checked;
+          else {
+            if(temp_attr[j].checked)
+              key_val[temp_attr[j].className] = 'True';
+            else
+              key_val[temp_attr[j].className] = 'False';
+          }
         }
         attributes.push(key_val);
         key_val = {};
@@ -622,6 +692,7 @@ $(document).ready(function() {
     temp['from'] = document.getElementById('fromTable').value;
     temp['to'] = document.getElementById('toTable').value;
     temp['text'] = document.getElementById('relation_type').value;
+    debugger
 
     var indexes = $.map(nodeDataArray, function(obj, index) {
         if(obj.key == document.getElementById('fromTable').value) {
@@ -630,7 +701,7 @@ $(document).ready(function() {
     });
 
     var str = '';
-    indexes = $.map(nodeDataArray[indexes].items, function(obj, index) {
+    indexes = $.map(nodeDataArray[indexes[0]].items, function(obj, index) {
         if(obj.iskey == true) {
             str += obj.name;
             str += ',';
@@ -642,7 +713,6 @@ $(document).ready(function() {
     str = '';
 
     for(var i=0;i<for_length;i++) {
-      debugger
       var foreign = document.getElementById('foreignkey'+i);
       var val = foreign.options[foreign.selectedIndex].text;
 
@@ -661,9 +731,9 @@ $(document).ready(function() {
   });
 });
 
-/*************************************************************************************************************
-**************************************************************************************************************
-*/
+//////////////////////////////////////////
+/////// INITIALIZER FUNCTIONS ////////////
+//////////////////////////////////////////
 
 /* GoJS object initializer */
 function init() {
@@ -774,7 +844,7 @@ function init() {
     myDiagram.addDiagramListener("ObjectDoubleClicked",
       function(e) {
         current_table = e.subject.part.data.key;
-        loadTableModal();
+        loadDeleteModal();
     });
 
   /**
