@@ -11,8 +11,8 @@ def index():
 
 @app.route('/api/sql/', methods=['POST'])
 def post_1():
-	return validate(request.stream.read())
+	return validate(request.stream.read(), 0)
 
 @app.route('/api/normalize/', methods=['POST'])
 def post_2():
-	return ret_normalize(request.stream.read())
+	return validate(request.stream.read(), 1)

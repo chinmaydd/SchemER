@@ -2,7 +2,7 @@
 Python code that takes a JSON file (assumed to be coming from the diagrammer) 
 and normalizes it based on the entered functional dependencies (upto 2NF).
 '''
-import json, ast, copy
+import json, ast, copy, pdb
 # errors = []
 final_list = []
 relation_list = []
@@ -96,8 +96,6 @@ def normalize( entity ):
 	final_list.append(entity)
 
 def ret_normalize(data):
-	print data
-	data = ast.literal_eval(data)
 	global final_list, relation_list
 	relation_list = data["relations"]
 	entity_list   = data["entities"]

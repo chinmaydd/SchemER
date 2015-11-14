@@ -3,7 +3,7 @@ Python code that takes a valid JSON file and produces the corresponding SQL
 DDL for table generation.
 '''
 import json
-import sys
+import sys, pdb
 from pprint import pprint
 
 # try:
@@ -16,6 +16,7 @@ from pprint import pprint
 #     data = json.load(data_file)
 
 def generate(data):
+	print data
 	# Process entities first
 	entity_list = data["entities"]
 	relation_list = data["relations"]

@@ -4,11 +4,12 @@ and checks whether all constraints / database rules are followed.
 '''
 import json, pdb, ast
 from generator import *
+from normalize import *
 
 # with open("../data/dummy.json") as data_file:
 # 	data = json.load(data_file)
 
-def validate(data):
+def validate(data, flag):
 	# print data
 	data = ast.literal_eval(data)
 	errors = []
@@ -63,6 +64,10 @@ def validate(data):
 			err_string += error
 
 	if err_string == '':
-		return generate(data)
+		if flag == 0:
+			return generate(data)
+		else:
+			temp = ret_normalize(data)
+			return generate(ast.literal_eval(temp))
 	else:
 		return err_string

@@ -291,30 +291,6 @@ function refreshRelationModal() {
 
   form_div.appendChild(sel1);
   form_div.appendChild(sel2);
-
-  var relation_type = document.createElement('select');
-  relation_type.id = 'relation_type';
-
-  var type1 = document.createElement('option');
-  type1.innerHTML = '0..N';
-  type1.value = '0..N';
-  type1.selected = '';
-
-  var type2 = document.createElement('option');
-  type2.innerHTML = '1..N';
-  type2.value = '1..N';
-  type2.selected = '';
-
-  var type3 = document.createElement('option');
-  type3.innerHTML = 'M..N';
-  type3.value = 'M..N';
-  type3.selected = '';
-
-  relation_type.appendChild(type1);
-  relation_type.appendChild(type2);
-  relation_type.appendChild(type3);
-
-  form_div.appendChild(relation_type);
 }
 
 function addRelation(linkData) {
@@ -592,7 +568,6 @@ function setJSON() {
   for(var i=0;i<linkDataArray.length;i++) {
     attr['from'] = linkDataArray[i].from;
     attr['to'] = linkDataArray[i].to;
-    attr['type'] = linkDataArray[i].text;
     attr['PK'] = linkDataArray[i].PK;
     attr['FK'] = linkDataArray[i].FK;
     json['relations'].push(attr);
@@ -645,8 +620,14 @@ function normalizeTables() {
       async: false,
       data: s,
       success: function(data) {
+        var div = document.getElementById('sqlstatement');
+        div.innerHTML = '';
+
+        div.innerHTML += data;
+        
+        $("#sql").overlay().load();
         console.log(data);
-        alert(data);
+        // alert(data);
       }
     })
   )
@@ -703,7 +684,7 @@ $(document).ready(function() {
     var temp = {};
     temp['from'] = document.getElementById('fromTable').value;
     temp['to'] = document.getElementById('toTable').value;
-    temp['text'] = document.getElementById('relation_type').value;
+    // temp['text'] = document.getElementById('relation_type').value;
     debugger
 
     var indexes = $.map(nodeDataArray, function(obj, index) {
