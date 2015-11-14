@@ -26,30 +26,33 @@ def validate(data):
 	for relation in relation_list:
 		fromTable = relation["from"]
 		toTable = relation["to"]
-		fromAttr = relation["FK"]
-		toAttr = relation["PK"]
+		fromAttrs = relation["FK"].split(",")
+		toAttrs = relation["PK"].split(",")
 		fromNotFound = toNotFound = True
-		fromType = toType = ""
+		fromTypes = ["" for x in range(len(fromAttrs))]
+		toTypes = ["" for x in range(len(toAttrs))]
 
 		for entity in entity_list:
 			if entity["name"] == fromTable:
 				fromNotFound = False
 				for attribute in entity["attributes"]:
-					if attribute["name"] == fromAttr:
-						fromType = attribute["datatype"]
+					if attribute["name"] in fromAttrs:
+						fromTypes[fromAttrs.index(attribute["name"])] = attribute["datatype"]
 						break
 			elif entity["name"] == toTable:
 				toNotFound = False
 				for attribute in entity["attributes"]:
-					if attribute["name"] == toAttr:
-						toType = attribute["datatype"]
+					if attribute["name"] in toAttrs:
+						toTypes[toAttrs.index(attribute["name"])] = attribute["datatype"]
 						break
+		if len(fromAttrs) != len(toAttrs):
+			errors.append("Number of FKs and PKs doesn't match!")
 		if fromNotFound == True:
 			errors.append("Foreign key table ({0}) not found!".format(fromTable))
 		if toNotFound == True:
 			errors.append("Referenced PK table ({0}) not found!".format(toTable))
-		if fromType != toType:
-			errors.append("FK ({0}) and PK ({1}) types don't match!".format(fromTable+"."+fromAttr, toTable+"."+toAttr))
+		if fromTypes != toTypes:
+			errors.append("FK ({0}) and PK ({1}) types don't match!".format(fromTable+"."+str(fromAttrs), toTable+"."+str(toAttrs)))
 
 	# validate()
 	err_string = ''
