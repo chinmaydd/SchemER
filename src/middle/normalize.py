@@ -67,14 +67,14 @@ def normalize( entity ):
 						fduse.append(j)
 						rnew = [ ]
 						for r in rhsi:
-							if( r not in FK and r not in attr ):
+							if( r not in FK and r not in attr):
 								attr.append( r )
 								rnew.append( r )
 						fd.append( '~'.join([ ','.join(lhsi) , ','.join(rnew) ]) )
 			if( len(attr) -len(lhs) > 0 ):
 				FDvisited =list(set(FDvisited + fduse))
 				attr_list_1 = [ d for d in entity["attributes"] if d["name"] in attr ]
-				attr_list_2 = [ d for d in entity["attributes"] if d["name"] not in attr or d["name"] in lhs ]
+				attr_list_2 = [ d for d in entity["attributes"] if d["name"] not in attr or d["name"] in lhs or d["name"] in PK ]
 				new_name = entity["name"]+'_'+str(i)
 				FD_new = fd
 				entity["attributes"] = attr_list_2
