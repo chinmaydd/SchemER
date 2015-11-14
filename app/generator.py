@@ -16,7 +16,7 @@ from pprint import pprint
 #     data = json.load(data_file)
 
 def generate(data):
-	print data
+	# print data
 	# Process entities first
 	entity_list = data["entities"]
 	relation_list = data["relations"]
@@ -32,7 +32,7 @@ def generate(data):
 	        chunks.append(",\n")
 	        if attribute["isPK"] == "True":
 	        	pkeys.append(attribute["name"])
-	    if len(pkeys) > 1:
+	    if len(pkeys) > 0:
 	    	chunks.append("PRIMARY KEY (" + ', '.join(pkeys) + ")")
 	    
 	    chunks.append("\n);\n")

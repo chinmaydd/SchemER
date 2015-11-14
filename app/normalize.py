@@ -22,6 +22,14 @@ def com_el( list1 ,  list2):
 			return True
 	return False
 
+def same_list(list1 , list2):
+	if(len(list1) != len(list2) ):
+		return False
+	for l in list1:
+		if l not in list2:
+			return False
+	return True 
+
 def normalize( entity ):
 	FK = [ ]
 	PK = [ ]
@@ -35,14 +43,26 @@ def normalize( entity ):
 	FK = FK
 	PK = PK
 	FDvisited = []
+	FD_nonredundant = []
+	for i in range(len(FD)):
+		lhs , rhs = FD[ i ].split('~')
+		lhs = lhs.split(',')
+		rhs = rhs.split(',')
+		lhs = [  s for s in lhs if s != '' ]
+		rhs = [  s for s in rhs if s != '' ]
+		if( not same_list(lhs,PK) ):
+			FD_nonredundant.append(FD[i])
+	FD = FD_nonredundant
 	for  i in range(len(FD)):
 		lhs , rhs = FD[ i ].split('~')
 		lhs = lhs.split(',')
 		rhs = rhs.split(',')
+		lhs = [  s for s in lhs if s != '' ]
+		rhs = [  s for s in rhs if s != '' ]
 		attr = [ ]
 		fd = [ ]
 		fduse = [ ]
-		if( lhs != PK and not com_el(lhs,FK)  and  i not in FDvisited):
+		if(  not same_list(lhs,PK) and not com_el(lhs,FK)  and  i not in FDvisited ):
 			attr = attr + lhs
 			fduse.append( i )
 			rnew = [ ]
@@ -54,8 +74,10 @@ def normalize( entity ):
 			for j in range( len(FD) ):
 				if(i != j and j not in FDvisited):
 					lhsi,rhsi = FD[j].split('~')
-					lhsi = sort( lhsi.split(',') )
-					rhsi = sort( rhsi.split(',') )
+					lhsi =  lhsi.split(',') 
+					rhsi =  rhsi.split(',')
+					lhsi = [  s for s in lhsi if s != '' ]
+					rhsi = [  s for s in rhsi if s != '' ] 
 					if( com_el(rhsi,lhs) ):
 						attr = [ ]
 						fd = [ ]
@@ -82,8 +104,8 @@ def normalize( entity ):
 				newentity["name"] = new_name
 				newentity["attributes"] = attr_list_1
 				for k in range(len(newentity["attributes"])):
-					if(newentity["attributes"][i]["name"] in lhs):
-						newentity["attributes"][i]["isPK"] = "True"
+					if(newentity["attributes"][k]["name"] in lhs):
+						newentity["attributes"][k]["isPK"] = "True"
 				newentity["fds"] = FD_new
 				relation = dict()
 				relation["from"] = entity["name"]
@@ -99,7 +121,6 @@ def ret_normalize(data):
 	global final_list, relation_list
 	relation_list = data["relations"]
 	entity_list   = data["entities"]
-	
 	for entity in entity_list:
 		normalize(entity)
 
