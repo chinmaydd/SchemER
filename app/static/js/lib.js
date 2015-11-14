@@ -13,6 +13,7 @@ var Bselect_value = 0;
 var global_table_sel;
 var global_option_sel;
 var for_length = 0;
+var s;
 var myDiagram, yellowgrad, bluegrad, greengrad, redgrad, lightgrad;
 declareColors();
 
@@ -163,7 +164,7 @@ function addFD() {
   Aselect_value = 0;
   Bselect_value = 0;
 
-  current_table = '';
+  // current_table = '';
 
   var func_str = str1 + '~' + str2;
 
@@ -173,6 +174,7 @@ function addFD() {
     entities[current_table] = [];
     entities[current_table].push(func_str);
   }
+  current_table
   closeFuncDepModal();
 }
 
@@ -181,6 +183,7 @@ function addFD() {
 /////////////////////////////
 
 function changeOptions() {
+  debugger
   for_length = 0;
   var foreign = document.getElementById('toTable');
   var val = foreign.options[foreign.selectedIndex].text;
@@ -200,8 +203,9 @@ function changeOptions() {
   keycount = $.map(nodeDataArray, function(obj, index) {
       var count=0;
       if(obj.key == primary) {
+        debugger
           for(var i=0;i<obj.items.length;i++) {
-            if(obj.items[i].iskey == true)
+            if(obj.items[i].iskey == 'True')
               count++;
           }
         return count;
@@ -554,10 +558,7 @@ $('#prompt').overlay().close();
 /////////// GENERATE JSON ///////////
 /////////////////////////////////////
 
-/**
- * Function call to generate SQL
- */
-function generateSQL() {
+function setJSON() {
   var json = {};
   var entity = {};
   var attr;
@@ -590,28 +591,58 @@ function generateSQL() {
     attr['from'] = linkDataArray[i].from;
     attr['to'] = linkDataArray[i].to;
     attr['type'] = linkDataArray[i].text;
+    attr['PK'] = linkDataArray[i].PK;
+    attr['FK'] = linkDataArray[i].FK;
     json['relations'].push(attr);
     attr = {};
   }
   console.log(json);
-  var s = JSON.stringify(json); 
+  s = JSON.stringify(json); 
+}
 
-  $.ajax({
-    type: 'post',
-    url: "http://localhost:5000/api/sql/",
-    contentType: "application/json",
-    data: s,
-    success: function(data) {
-      console.log(data);
-      alert(data);
-    }
-  });
+///////////////////////////////////////////
+///// FUNCTION CALL FOR SQL Query Gen /////
+///////////////////////////////////////////
+
+function generateSQL() {
+  $.when(setJSON()).then(
+    $.ajax({
+      type: 'post',
+      url: "http://localhost:5000/api/sql/",
+      contentType: "application/json",
+      async: false,
+      data: s,
+      success: function(data) {
+        console.log(data);
+        alert(data);
+      }
+    })
+  )
+}
+
+///////////////////////////////////////////
+///// FUNCTION CALL FOR NORMALIZATION /////
+///////////////////////////////////////////
+
+function normalizeTables() {
+  $.when(setJSON()).then(
+    $.ajax({
+      type: 'post',
+      url: "http://localhost:5000/api/normalize/",
+      contentType: "application/json",
+      async: false,
+      data: s,
+      success: function(data) {
+        console.log(data);
+        alert(data);
+      }
+    })
+  )
 }
 
 //////////////////////////////////////////////
 ///////////// DOCUMENT READY FUNCTION ////////
 //////////////////////////////////////////////
-
 
 /**
  * Binds addTable() function to modal submit at document.ready()
@@ -635,8 +666,12 @@ $(document).ready(function() {
         for(var j=0;j<temp_attr.length;j++){
           if(temp_attr[j].className == 'attribute_name' || temp_attr[j].className == 'data_type')
             key_val[temp_attr[j].className] = temp_attr[j].value;
-          else
-            key_val[temp_attr[j].className] = temp_attr[j].checked;
+          else {
+            if(temp_attr[j].checked)
+              key_val[temp_attr[j].className] = 'True';
+            else
+              key_val[temp_attr[j].className] = 'False';
+          }
         }
         attributes.push(key_val);
         key_val = {};
@@ -657,6 +692,7 @@ $(document).ready(function() {
     temp['from'] = document.getElementById('fromTable').value;
     temp['to'] = document.getElementById('toTable').value;
     temp['text'] = document.getElementById('relation_type').value;
+    debugger
 
     var indexes = $.map(nodeDataArray, function(obj, index) {
         if(obj.key == document.getElementById('fromTable').value) {
@@ -665,7 +701,7 @@ $(document).ready(function() {
     });
 
     var str = '';
-    indexes = $.map(nodeDataArray[indexes].items, function(obj, index) {
+    indexes = $.map(nodeDataArray[indexes[0]].items, function(obj, index) {
         if(obj.iskey == true) {
             str += obj.name;
             str += ',';
@@ -677,7 +713,6 @@ $(document).ready(function() {
     str = '';
 
     for(var i=0;i<for_length;i++) {
-      debugger
       var foreign = document.getElementById('foreignkey'+i);
       var val = foreign.options[foreign.selectedIndex].text;
 

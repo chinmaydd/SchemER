@@ -8,7 +8,7 @@ import json, pdb, ast
 # 	data = json.load(data_file)
 
 def validate(data):
-	print data
+	# print data
 	data = ast.literal_eval(data)
 	errors = []
 	# First, validate FK->PK constraint
@@ -52,10 +52,10 @@ def validate(data):
 			errors.append("FK ({0}) and PK ({1}) types don't match!".format(fromTable+"."+fromAttr, toTable+"."+toAttr))
 
 	# validate()
-	err_string = 'Success!'
+	err_string = ''
 	if len(errors):
-		print "ERRORS:"
+		# print "ERRORS:"
 		for idx, error in enumerate(errors):
-			err_string += (str(idx+1) + ".", error)
+			err_string += error
 
 	return err_string
