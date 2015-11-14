@@ -214,7 +214,7 @@ function changeOptions() {
       var count=0;
       if(obj.key == primary) {
           for(var i=0;i<obj.items.length;i++) {
-            if(obj.items[i].iskey == 'True') {
+            if(obj.items[i].iskey == 'True' || obj.items[i].iskey == true) {
               count++;
               pkeys.push(obj.items[i].name)
             }
@@ -582,7 +582,7 @@ function setJSON() {
       attr['notNULL'] = nodeDataArray[i].items[j].notNULL;
       attr['isUnique'] = nodeDataArray[i].items[j].isUnique;
       
-      if(nodeDataArray[i].items[j].iskey == true)
+      if(nodeDataArray[i].items[j].iskey == true || nodeDataArray[i].items[j].iskey == 'True')
         attr['isPK'] = 'True';
       else
         attr['isPK'] = 'False';
