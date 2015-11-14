@@ -5,4 +5,4 @@ flask/*
 *.pyc
 
 # No point in committing SQL statements
-src/data/SQL.in
+app/data/SQL.in

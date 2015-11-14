@@ -606,6 +606,10 @@ function setJSON() {
 ///// FUNCTION CALL FOR SQL Query Gen /////
 ///////////////////////////////////////////
 
+function closesqlModal() {
+  $('#sql').overlay().close();
+}
+
 function generateSQL() {
   $.when(setJSON()).then(
     $.ajax({
@@ -615,8 +619,14 @@ function generateSQL() {
       async: false,
       data: s,
       success: function(data) {
+        var div = document.getElementById('sqlstatement');
+        div.innerHTML = '';
+
+        div.innerHTML += data;
+        
+        $("#sql").overlay().load();
         console.log(data);
-        alert(data);
+        // alert(data);
       }
     })
   )

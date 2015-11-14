@@ -3,6 +3,7 @@ Python code that takes a JSON file (assumed to be coming from the diagrammer)
 and checks whether all constraints / database rules are followed.
 '''
 import json, pdb, ast
+from generator import *
 
 # with open("../data/dummy.json") as data_file:
 # 	data = json.load(data_file)
@@ -61,4 +62,7 @@ def validate(data):
 		for idx, error in enumerate(errors):
 			err_string += error
 
-	return err_string
+	if err_string == '':
+		return generate(data)
+	else:
+		return err_string
