@@ -1,5 +1,6 @@
-# Automated-Schema-Generation
-Course Project for Databases
+# Translation of ER diagram to Relational Schema with Normalization.
+
+This tool is our course Project for Database Management Systems.
 
 ##Setup
 * Setup virtual environment
@@ -11,3 +12,9 @@ Course Project for Databases
 
 * Run!
 	* `$ ./run.py`
+
+Authors:
+Abraham Sebastian
+Kishor Bhat
+Chinmay Deshpande
+Sagar R Alavandar

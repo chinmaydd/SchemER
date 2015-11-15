@@ -527,7 +527,6 @@ function addTable(tableData){
 
       for(var i=0;i<attributes.length;i++){
         if(attributes[i].attribute_name == '' || attributes[i].attribute_name.indexOf(' ') > -1) {
-          console.log('');
         }
         else {
           temp['name'] = attributes[i].attribute_name;
@@ -603,7 +602,6 @@ function setJSON() {
     json['relations'].push(attr);
     attr = {};
   }
-  // console.log(json);
   copy_json = json;
   s = JSON.stringify(json);
 
@@ -632,8 +630,6 @@ function generateSQL() {
         div.innerHTML += data;
         
         $("#sql").overlay().load();
-        console.log(data);
-        // alert(data);
       }
     })
   )
@@ -658,8 +654,6 @@ function normalizeTables() {
         div.innerHTML += data;
         
         $("#sql").overlay().load();
-        console.log(data);
-        // alert(data);
       }
     })
   )
@@ -778,7 +772,6 @@ $(document).ready(function() {
       }
       addTable({table_name: name, attribute: attributes});  
 
-      /* console.log(input); */
       $("#prompt").overlay().close();
       this.reset();
 
