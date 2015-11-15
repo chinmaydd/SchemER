@@ -689,6 +689,7 @@ function newDiagram() {
 }
 
 function updateDiagram(data) {
+  entities = [];
   linkDataArray = [];
   nodeDataArray = [];
 
@@ -731,6 +732,8 @@ function updateDiagram(data) {
   for(var i=0;i<relation_list.length;i++) {
       temp['from'] = relation_list[i].to;
       temp['to'] = relation_list[i].from;
+      temp['PK'] = relation_list[i].PK;
+      temp['FK'] = relation_list[i].FK;
       linkDataArray.push(temp);
       temp = {};
   }
