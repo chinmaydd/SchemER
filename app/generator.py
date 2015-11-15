@@ -58,10 +58,8 @@ def generate(data):
 
 			if(flag):
 				chunks.append(' '.join(blocks))
+				chunks.append(',')
 				mflag = True
-			else:
-				chunks.pop()
-			chunks.append(",\n")
 		# remove last comma
 		chunks.pop()
 		chunks.append(";\n")
