@@ -39,14 +39,14 @@ def validate(data, flag):
 			if entity["name"] == fromTable:
 				fromNotFound = False
 				for attribute in entity["attributes"]:
-					if attribute["name"] in fromAttrs:
-						fromTypes[fromAttrs.index(attribute["name"])] = attribute["datatype"]
+					if attribute["name"] in toAttrs:
+						fromTypes[toAttrs.index(attribute["name"])] = attribute["datatype"]
 						break
 			elif entity["name"] == toTable:
 				toNotFound = False
 				for attribute in entity["attributes"]:
-					if attribute["name"] in toAttrs:
-						toTypes[toAttrs.index(attribute["name"])] = attribute["datatype"]
+					if attribute["name"] in fromAttrs:
+						toTypes[fromAttrs.index(attribute["name"])] = attribute["datatype"]
 						break
 		if len(fromAttrs) != len(toAttrs):
 			errors.append("Number of FKs and PKs doesn't match!")
