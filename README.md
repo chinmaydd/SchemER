@@ -13,8 +13,12 @@ This tool is our course Project for Database Management Systems.
 * Run!
 	* `$ ./run.py`
 
-Authors:
-Abraham Sebastian
-Kishor Bhat
-Chinmay Deshpande
-Sagar R Alavandar
+##Description
+
+This tool is developed using the [GoJS](http://gojs.net/latest/index.html) library for JavaScript. The code backend is written completely in Python.<br />
+
+##Authors:
+Abraham Sebastian<br />
+Kishor Bhat<br />
+Chinmay Deshpande<br />
+Sagar R Alavandar<br />
