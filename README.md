@@ -1,6 +1,6 @@
-# Translation of ER diagram to Relational Schema with Normalization.
+# Translation of ER diagram to Relational Schema with Normalization
 
-This tool is our course Project for Database Management Systems.
+This tool is our course project for Database Management Systems.
 
 ##Setup
 * Setup virtual environment
@@ -10,15 +10,15 @@ This tool is our course Project for Database Management Systems.
 * Install dependencies
 	* `pip install -r requirements.txt`
 
-* Run!
+* Run! Navigate to <http://127.0.0.1:5000/> to use the tool.
 	* `$ ./run.py`
 
 ##Description
 
-This tool is developed using the [GoJS](http://gojs.net/latest/index.html) library for JavaScript. The code backend is written completely in Python.<br />
+This tool's frontend was developed using the [GoJS](http://gojs.net/latest/index.html) library for JavaScript. The backend was written completely in Python.<br />
 
 ##Authors:
-Abraham Sebastian<br />
-Kishor Bhat<br />
-Chinmay Deshpande<br />
-Sagar R Alavandar<br />
+[Abraham Sebastian](https://github.com/abgese)<br />
+[Kishor Bhat](https://github.com/therealkbhat)<br />
+[Chinmay Deshpande](https://github.com/chinmaydd)<br />
+[Sagar R Alavandar](https://github.com/gitsagar)<br />
