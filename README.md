@@ -1,6 +1,6 @@
-# Translation of ER diagram to Relational Schema with Normalization
+# SchemER
 
-This tool is our course project for Database Management Systems.
+<br />A tool for translation of ER diagram to Relational Schema with Normalization. This is our course project for Database Management Systems.
 
 ##Setup
 * Setup virtual environment
