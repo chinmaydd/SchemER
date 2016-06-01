@@ -22,3 +22,7 @@ This tool's frontend was developed using the [GoJS](http://gojs.net/latest/index
 [Kishor Bhat](https://github.com/therealkbhat)<br />
 [Chinmay Deshpande](https://github.com/chinmaydd)<br />
 [Sagar R Alavandar](https://github.com/gitsagar)<br />
+
+## License
+
+MIT
