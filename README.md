@@ -1,8 +1,8 @@
 # SchemER
 
-<br />A tool for translation of ER diagram to Relational Schema with Normalization. This is our course project for Database Management Systems.
+A tool for translation of ER diagram to Relational Schema with Normalization. This is our course project for Database Management Systems.
 
-##Setup
+## Setup
 * Setup virtual environment
 	* `$ virtualenv flask`
 	* `$ source flask/bin/activate`
@@ -13,11 +13,12 @@
 * Run! Navigate to <http://127.0.0.1:5000/> to use the tool.
 	* `$ ./run.py`
 
-##Description
+## Description
 
 This tool's frontend was developed using the [GoJS](http://gojs.net/latest/index.html) library for JavaScript. The backend was written completely in Python.<br />
 
-##Authors:
+## Authors
+
 [Abraham Sebastian](https://github.com/abgese)<br />
 [Kishor Bhat](https://github.com/therealkbhat)<br />
 [Chinmay Deshpande](https://github.com/chinmaydd)<br />
